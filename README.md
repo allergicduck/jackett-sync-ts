@@ -25,10 +25,13 @@ One of the created entries:
 ## Extend the capabilities
 
 ### To add a new "indexer source" (e.g. Jackett, NZBHydra)
-NOTE: this is not supported yet in the main app yet, but possible in the future.
+NOTE: Possible, but not tested as i don't use Usenet/NZBHydra
 
 Edit `services.js`, add a new service with the `get` method, and set the `source` property, and as long as you return an array with indexer objects following the schema described at the top (in the `schema` const variable), it should work!
 
 ### To add a new "indexer consumer" (e.g Sonarr, Radarr, Lidarr, LazyLibrarian)
 Edit `services.js`, add a new service with the `get` (same as with indexer sources), `add` (consume a singular indexer object and add to the upstream service) and `shouldAdd` (use this to filter out indexers that don't provide the correct categories) methods.
 Error handling is very rudimentary to say the least, but its good enough for the time being.
+
+# Usenet support
+Theoretically it should work, but as stated earlier untested
