@@ -1,1 +1,12 @@
 .vscode
+
+# Yarn /w zero-installs
+.yarn/*
+!.yarn/cache
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+# For node-gyp
+!.yarn/unplugged
+!.yarn/build-state.yml
