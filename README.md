@@ -2,6 +2,14 @@
 
 A quick & dirty extensible Jackett-to-Sonarr/Radarr/Lidarr/Whatever indexer synchronizer written in Node.js. PRs are welcome!
 
+## Install
+### NPM
+```
+npm i -g jackett-sync
+```
+### Docker
+Soon(TM) i'll make a docker image with cron to run this periodically (or altrnatively find a way to do it whenever stuff changes in Jackett)
+
 ## Usage
 Services declare required and optional parameters in the `services.js` file, you can supply them on the command line with `--<param name> <value>`. If the correct required params are detected, the line "Found config for \<service name>" will appear in the console. You can view all options with `--help`
 
