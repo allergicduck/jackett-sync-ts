@@ -1,0 +1,73 @@
+{
+  "name": "node-expat",
+  "version": "2.3.18",
+  "main": "./lib/node-expat",
+  "description": "NodeJS binding for fast XML parsing.",
+  "keywords": [
+    "xml",
+    "sax",
+    "expat",
+    "libexpat",
+    "parse",
+    "parsing"
+  ],
+  "scripts": {
+    "preversion": "npm test",
+    "lint": "standard",
+    "unit": "vows --spec ./test/**/*.js",
+    "test": "npm run unit && npm run lint",
+    "benchmark": "node ./benchmark.js"
+  },
+  "dependencies": {
+    "bindings": "^1.5.0",
+    "nan": "^2.13.2"
+  },
+  "devDependencies": {
+    "benchmark": "^2.1.0",
+    "debug": "^2.2.0",
+    "iconv": "^2.2.0",
+    "ltx": "^2.3.0",
+    "node-xml": "^1.0.2",
+    "sax": "^1.2.1",
+    "standard": "^7.1.2",
+    "vows": "^0.8.1"
+  },
+  "repository": "github:astro/node-expat",
+  "homepage": "http://github.com/astro/node-expat",
+  "bugs": "https://github.com/astro/node-expat/issues",
+  "author": {
+    "name": "Astro",
+    "email": "astro@spaceboyz.net",
+    "web": "http://spaceboyz.net/~astro/"
+  },
+  "contributors": [
+    "Stephan Maka",
+    "Derek Hammer",
+    "Iein Valdez",
+    "Peter Körner",
+    "Camilo Aguilar",
+    "Michael Weibel",
+    "Alexey Zhuchkov",
+    "Satyam Shekhar",
+    "Dhruv Matani",
+    "Andreas Botsikas",
+    "Tom Hughes-Croucher",
+    "Nathan Rajlich",
+    "Julien Genestoux",
+    "Sonny Piers",
+    "Lloyd Watkin",
+    "AJ ONeal",
+    "Rod Vagg",
+    "Christoph Hartmann",
+    "Corbin Uselton",
+    "Julian Duque",
+    "Lovell Fuller",
+    "Antonio Bustos"
+  ],
+  "licenses": [
+    {
+      "type": "MIT"
+    }
+  ],
+  "license": "MIT"
+}
