@@ -8,7 +8,7 @@ Services declare required and optional parameters in the `services.js` file, you
 # Example
 Example in a docker enviroment (jackett-sync running on host), badasstorrents was down at the time
 ```
-jackett-sync --url http://127.0.0.1:9117/jackett --apikey sen08b96xf8x1o3twv9n1aml8da8p7mp --alturl http://jackett:9117/jackett --sonarrurl http://127.0.0.1:8989/sonarr --sonarrkey b27b78ff3e994da1b4460f40e576a029 --sonarrcats 5000,5030,5040
+$ jackett-sync --url http://127.0.0.1:9117/jackett --apikey sen08b96xf8x1o3twv9n1aml8da8p7mp --alturl http://jackett:9117/jackett --sonarrurl http://127.0.0.1:8989/sonarr --sonarrkey b27b78ff3e994da1b4460f40e576a029 --sonarrcats 5000,5030,5040
 
 Found config for jackett
 Found config for sonarr
