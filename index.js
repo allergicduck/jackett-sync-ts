@@ -62,7 +62,7 @@ function serviceParams(service) {
 	return params;
 }
 
-async function sync(service, to) {
+async function sync(service, to, name) {
 	// await service.sync(...serviceParams(service), jackettIndexers);
 
 	try {
@@ -83,7 +83,7 @@ async function sync(service, to) {
 			});
 
 		if (toAddIds.length > 0) {
-			console.log(`Adding ${toAddIds.join(', ')}`);
+			console.log(`Adding ${toAddIds.join(', ')} to ${name}`);
 		} else {
 			console.log("Nothing do add");
 		}
@@ -108,7 +108,7 @@ async function sync(service, to) {
 			const service = services[name];
 			console.log(`Found config for ${name}`)
 			if (!service.source && service.add && service.shouldAdd) {
-				promises.push(sync(service, indexers));
+				promises.push(sync(service, indexers, name));
 			}
 		})
 

@@ -10,3 +10,4 @@
 # For node-gyp
 !.yarn/unplugged
 !.yarn/build-state.yml
+curl.sh

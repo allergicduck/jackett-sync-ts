@@ -5,7 +5,8 @@
   "author": "Łukasz Mariański <lmarianski@protonmail.com>",
   "license": "GPL-3.0",
   "scripts": {
-    "start": "node --trace-warnings ."
+    "start": "node --trace-warnings .",
+    "testsc": "node test.js"
   },
   "dependencies": {
     "axios": "^0.19.2",

@@ -100,7 +100,7 @@ module.exports = {
 				enableInteractiveSearch: true,
 				supportsRss: true,
 				supportsSearch: true,
-				protocol: 'torrent',
+				protocol: indexer.protocol,
 				name: indexer.title,
 				fields: [
 					{ name: 'baseUrl', value: indexer.url },
@@ -117,7 +117,6 @@ module.exports = {
 				implementationName: 'Torznab',
 				implementation: 'Torznab',
 				configContract: 'TorznabSettings',
-				infoLink: 'https://github.com/Sonarr/Sonarr/wiki/Supported-Indexers#torznab',
 				tags: []
 			}
 
@@ -125,9 +124,76 @@ module.exports = {
 				const resp = await axios.post(reqUrl, body);
 				console.log(`Added ${indexer.id} successfully`);
 			} catch (e) { 
-				console.log(`Failed to add ${indexer.id}`);
+				console.error(`Failed to add ${indexer.id} to sonarr: ${e.response.data[0].errorMessage}`);
 			}
 		},
 		shouldAdd: (url, key, cats, el) => el.categories.some(r => cats.includes(r))
-	}
+	},
+	radarr: {
+		params: ['radarrurl', 'radarrkey', 'radarrcats'],
+		required: ['radarrurl', 'radarrkey'],
+		defaults: [undefined, undefined, '2000,2010,2020,2030,2035,2040,2045,2050,2060'],
+		process: [undefined, undefined, (val) => val.split(',').map(el => parseInt(el))],
+		get: async (url, key, cats) => {
+			const sonarrIndexers = `${url}/api/indexer?apikey=${key}`;
+
+			const response = await axios.get(sonarrIndexers);
+			const indexers = [];
+
+			for (const i in response.data) {
+				const entry = response.data[i];
+				const indexer = Object.assign({}, schema, {
+					sonarrId: entry.id,
+					title: entry.name,
+					protocol: entry.protocol,
+					url: entry.fields[0].value,
+					id: undefined
+				});
+
+				let match = indexer.url.match(indexerRegex);
+				if (match) {
+					indexer.id = match.groups.id;
+				}
+
+				indexers.push(indexer);
+			}
+
+			return indexers;
+		},
+		add: async (url, key, cats, indexer) => {
+			const reqUrl = `${url}/api/indexer?apikey=${key}`
+
+			const body = {
+				enableRss: true,
+				enableSearch: true,
+				supportsRss: true,
+				supportsSearch: true,
+				protocol: indexer.protocol,
+				name: indexer.title,
+				fields: [
+					{ name: 'BaseUrl', value: indexer.url },
+					{ name: 'MultiLanguages', value: '' },
+					{ name: 'ApiKey', value: indexer.key },
+					{ name: 'Categories', value: cats, },
+					{ name: 'AnimeCategories', value: [] },
+					{ name: 'AdditionalParameters', },
+					{ name: 'RemoveYear', value: false, },
+					{ name: 'SearchByTitle', value: false, },
+					{ name: 'MinimumSeeders', value: 1, },
+					{ name: 'RequiredFlags', value: '' }
+				],
+				implementationName: 'Torznab',
+				implementation: 'Torznab',
+				configContract: 'TorznabSettings'
+			}
+
+			try {
+				const resp = await axios.post(reqUrl, body);
+				console.log(`Added ${indexer.id} successfully`);
+			} catch (e) { 
+				console.error(`Failed to add ${indexer.id} to radarr: ${e.response.data[0].errorMessage}`);
+			}
+		},
+		shouldAdd: (url, key, cats, el) => el.categories.some(r => cats.includes(r))
+	}	
 }
