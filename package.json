@@ -5,12 +5,12 @@
   "author": "Łukasz Mariański <lmarianski@protonmail.com>",
   "license": "GPL-3.0",
   "scripts": {
-    "start": "node --trace-warnings .",
-    "test": "node t.js"
+    "start": "node --trace-warnings ."
   },
   "dependencies": {
     "axios": "^0.19.2",
     "commander": "^6.0.0",
     "xml2json": "^0.12.0"
-  }
+  },
+  "bin": "./index.js"
 }

@@ -25,6 +25,7 @@ const schema = {
 
 module.exports = {
 	jackett: {
+		source: true,
 		params: ['url', 'apikey', 'alturl'],
 		// defaults: [],
 		get: async (url, apikey, alturl) => {
@@ -36,21 +37,25 @@ module.exports = {
 			for (const i in indexers) {
 				const entry = indexers[i];
 
-				const category = entry.caps.categories.category;
+				let category = entry.caps.categories.category;
+
+				if (!category.map) 
+					category = [category];
 
 				const obj = Object.assign({}, schema, {
 					id: entry.id,
 					title: entry.title,
 					protocol: "torrent",
-					categories: typeof category === 'array' ? category.map(cat => parseInt(cat.id)) : [parseInt(category.id)],
+					categories: category.map(cat => parseInt(cat.id)),
 					url: `${alturl || url}/api/v2.0/indexers/${entry.id}/results/torznab/`,
 					key: apikey,
 				});
 
-
-
 				indexers[i] = obj
 			}
+
+			// console.log(indexers)
+
 
 			return indexers;
 		}
@@ -59,7 +64,8 @@ module.exports = {
 		params: ['sonarrurl', 'sonarrkey', 'sonarrcats'],
 		required: ['sonarrurl', 'sonarrkey'],
 		defaults: [undefined, undefined, '5000,5030,5040'],
-		get: async (url, key) => {
+		process: [undefined, undefined, (val) => val.split(',').map(el => parseInt(el))],
+		get: async (url, key, cats) => {
 			const sonarrIndexers = `${url}/api/v3/indexer?apikey=${key}`;
 
 			const response = await axios.get(sonarrIndexers);
@@ -87,9 +93,6 @@ module.exports = {
 		},
 		add: async (url, key, cats, indexer) => {
 			const reqUrl = `${url}/api/v3/indexer?apikey=${key}`
-
-			if (typeof cats === 'string')
-				cats = cats.split(",").map(el => parseInt(el));
 
 			const body = {
 				enableRss: true,
@@ -125,33 +128,6 @@ module.exports = {
 				console.log(`Failed to add ${indexer.id}`);
 			}
 		},
-		sync: async (url, key, cats, to) => {
-			try {
-				const indexers = (await module.exports.sonarr.get(url, key)).filter(el => el.id);
-				cats = cats.split(",").map(el => parseInt(el));
-
-				const idList = indexers.map(el => el.id);
-
-				const promises = [];
-				const toAddIds = [];
-
-				to.filter(el => !idList.includes(el.id))
-					.filter(el => el.categories.some(r => cats.includes(r)))
-					.forEach(el => {
-						toAddIds.push(el.id);
-						promises.push(module.exports.sonarr.add(url, key, cats, el));
-					});
-
-				if (toAddIds.length > 0) {
-					console.log(`Adding ${toAddIds.join(', ')}`);
-				} else {
-					console.log("Nothing do add");
-				}
-				await Promise.all(promises);
-			} catch (e) {
-				console.error(e);
-			}
-
-		}
+		shouldAdd: (url, key, cats, el) => el.categories.some(r => cats.includes(r))
 	}
 }

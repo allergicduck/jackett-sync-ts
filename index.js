@@ -1,13 +1,7 @@
-//http://127.0.0.1:9117/jackett/api/v2.0/indexers/all/results/torznab/api?apikey=sen08b96xf8x1o3twv9n1aml8da8p7mp&t=indexers&configured=true
+#!/bin/env node
 
 const { Command } = require("commander");
-const axios = require("axios");
-const parser = require("xml2json");
-
-const util = require("util");
-
 const services = require("./services.js");
-const { read } = require("fs");
 
 const program = new Command();
 
@@ -29,8 +23,6 @@ for (const i in services) {
 }
 
 program.parse(process.argv);
-
-// const serviceParams;
 
 function findServices() {
 	const readyServices = {};
@@ -60,28 +52,63 @@ function findServices() {
 function serviceParams(service) {
 	const params = []
 
-	service.params.forEach(el => {
-		params.push(program[el]);
+	service.params.forEach((el, i) => {
+		let val = program[el];
+		if (service.process && service.process[i])
+			val = service.process[i](val);
+		params.push(val);
 	});
 
 	return params;
 }
 
-async function sync(service, jackettIndexers) {
-	await service.sync(...serviceParams(service), jackettIndexers);
+async function sync(service, to) {
+	// await service.sync(...serviceParams(service), jackettIndexers);
+
+	try {
+		const params = serviceParams(service);
+
+		const indexers = (await service.get(...params)).filter(el => el.id);
+
+		const idList = indexers.map(el => el.id);
+
+		const promises = [];
+		const toAddIds = [];
+
+		to.filter(el => !idList.includes(el.id))
+			.filter(el => service.shouldAdd(...params, el))
+			.forEach(el => {
+				toAddIds.push(el.id);
+				promises.push(service.add(...params, el));
+			});
+
+		if (toAddIds.length > 0) {
+			console.log(`Adding ${toAddIds.join(', ')}`);
+		} else {
+			console.log("Nothing do add");
+		}
+		await Promise.all(promises);
+	} catch (e) {
+		console.error(e);
+	}	
 }
 
 (async () => {
 	try {
-		const jackettIndexers = await services.jackett.get(...serviceParams(services.jackett));
+		const readyServices = findServices();
+
+		const sources = Object.values(readyServices).filter(el => el.source);
+		const indexers = (await Promise.all(sources.map(async el => await el.get(...serviceParams(el))))).reduce((result,i) => result.concat(i), []);
+
+		// console.log(indexers)
 
 		const promises = [];
 
-		Object.keys(findServices()).forEach(async name => {
+		Object.keys(readyServices).forEach(async name => {
 			const service = services[name];
-			if (service.sync) {
-				console.log(`Found valid config for ${name}`)
-				promises.push(sync(service, jackettIndexers));
+			console.log(`Found config for ${name}`)
+			if (!service.source && service.add && service.shouldAdd) {
+				promises.push(sync(service, indexers));
 			}
 		})
 
