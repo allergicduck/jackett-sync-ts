@@ -1,6 +1,6 @@
 # Jackett-Sync
 
-A quick & dirty extensible Jackett-to-Sonarr/Radarr/Lidarr/Whatever indexer synchronizer written in Node.js. PR are welcome!
+A quick & dirty extensible Jackett-to-Sonarr/Radarr/Lidarr/Whatever indexer synchronizer written in Node.js. PRs are welcome!
 
 ## Usage
 Services declare required and optional parameters in the `services.js` file, you can supply them on the command line with `--<param name> <value>`. If the correct required params are detected, the line "Found config for \<service name>" will appear in the console. You can view all options with `--help`
