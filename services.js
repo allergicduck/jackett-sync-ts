@@ -195,5 +195,75 @@ module.exports = {
 			}
 		},
 		shouldAdd: (url, key, cats, el) => el.categories.some(r => cats.includes(r))
-	}	
+	},
+	lidarr: {
+		params: ['lidarrurl', 'lidarrkey', 'lidarrcats'],
+		required: ['lidarrurl', 'lidarrkey'],
+		defaults: [undefined, undefined, '3000,3010,3020,3030,3040'],
+		process: [undefined, undefined, (val) => val.split(',').map(el => parseInt(el))],
+		get: async (url, key, cats) => {
+			const sonarrIndexers = `${url}/api/v1/indexer?apikey=${key}`;
+
+			const response = await axios.get(sonarrIndexers);
+			const indexers = [];
+
+			for (const i in response.data) {
+				const entry = response.data[i];
+				const indexer = Object.assign({}, schema, {
+					sonarrId: entry.id,
+					title: entry.name,
+					protocol: entry.protocol,
+					url: entry.fields[0].value,
+					id: undefined
+				});
+
+				let match = indexer.url.match(indexerRegex);
+				if (match) {
+					indexer.id = match.groups.id;
+				}
+
+				indexers.push(indexer);
+			}
+
+			return indexers;
+		},
+		add: async (url, key, cats, indexer) => {
+			const reqUrl = `${url}/api/v1/indexer?apikey=${key}`
+
+			const body = {
+				enableRss: true,
+				enableAutomaticSearch: true,
+				enableInteractiveSearch: true,
+				supportsRss: true,
+				supportsSearch: true,
+				protocol: indexer.protocol,
+				name: indexer.title,
+				fields: [
+					{ name: 'baseUrl', value: indexer.url },
+					{ name: 'apiPath', value: '/api' },
+					{ name: 'apiKey', value: indexer.key },
+					{ name: 'categories', value: cats },
+					{ name: 'earlyReleaseLimit' },
+					{ name: 'additionalParameters' },
+					{ name: 'minimumSeeders', value: 1 },
+					{ name: 'seedCriteria.seedRatio' },
+					{ name: 'seedCriteria.seedTime' },
+					{ name: 'seedCriteria.discographySeedTime' }
+				],
+				implementationName: 'Torznab',
+				implementation: 'Torznab',
+				configContract: 'TorznabSettings',
+				tags: []
+			}
+
+			try {
+				const resp = await axios.post(reqUrl, body);
+				console.log(`Added ${indexer.id} successfully`);
+			} catch (e) { 
+				console.error(`Failed to add ${indexer.id} to lidarr: ${e.response.data[0].errorMessage}`);
+				// console.error(e)
+			}
+		},
+		shouldAdd: (url, key, cats, el) => el.categories.some(r => cats.includes(r))
+	},	
 }

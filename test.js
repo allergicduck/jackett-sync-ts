@@ -1,26 +1,28 @@
 const axios = require('axios');
 const body = {
   enableRss: true,
-  enableSearch: true,
+  enableAutomaticSearch: true,
+  enableInteractiveSearch: true,
   supportsRss: true,
   supportsSearch: true,
   protocol: 'torrent',
-  name: 'AAA',
+  name: 'aaaa',
   fields: [
-    { name: 'BaseUrl', value: 'http://jackett:9117/jackett/api/v2.0/indexers/1337x/results/torznab/' },
-    { name: 'MultiLanguages', value: '' },
-    { name: 'ApiKey', value: 'sen08b96xf8x1o3twv9n1aml8da8p7mp' },
-    { name: 'Categories', value: [2000, 2010, 2020, 2030, 2035, 2040, 2045, 2050, 2060] },
-    { name: 'AnimeCategories', value: [] },
-    { name: 'AdditionalParameters' },
-    { name: 'RemoveYear', value: false },
-    { name: 'SearchByTitle', value: false },
-    { name: 'MinimumSeeders', value: 1 },
-    { name: 'RequiredFlags', value: '' }
+    { name: 'baseUrl', value: 'http://jackett:9117/jackett/api/v2.0/indexers/1337x/results/torznab/' },
+    { name: 'apiPath', value: '/api' },
+    { name: 'apiKey', value: 'sen08b96xf8x1o3twv9n1aml8da8p7mp' },
+    { name: 'categories', value: [3000, 3010, 3020, 3030, 3040] },
+    { name: 'earlyReleaseLimit' },
+    { name: 'additionalParameters' },
+    { name: 'minimumSeeders', value: 1 },
+    { name: 'seedCriteria.seedRatio' },
+    { name: 'seedCriteria.seedTime' },
+    { name: 'seedCriteria.discographySeedTime' }
   ],
   implementationName: 'Torznab',
   implementation: 'Torznab',
-  configContract: 'TorznabSettings'
+  configContract: 'TorznabSettings',
+  tags: []
 }
 
-axios.post('http://localhost:7878/radarr/api/indexer?apikey=b2af47b281e944b2b446cafc6a2832db', body).catch(e => console.error(e))
+axios.post('https://localhost/lidarr/api/v1/indexer?apikey=0e0d8c9fa9234ffaa81c501d37d926a8', body).catch(e => console.error(e))
