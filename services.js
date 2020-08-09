@@ -66,9 +66,9 @@ module.exports = {
 		defaults: [undefined, undefined, '5000,5030,5040'],
 		process: [undefined, undefined, (val) => val.split(',').map(el => parseInt(el))],
 		get: async (url, key, cats) => {
-			const sonarrIndexers = `${url}/api/v3/indexer?apikey=${key}`;
+			const reqUrl = `${url}/api/v3/indexer?apikey=${key}`;
 
-			const response = await axios.get(sonarrIndexers);
+			const response = await axios.get(reqUrl);
 			const indexers = [];
 
 			for (const i in response.data) {
@@ -135,9 +135,9 @@ module.exports = {
 		defaults: [undefined, undefined, '2000,2010,2020,2030,2035,2040,2045,2050,2060'],
 		process: [undefined, undefined, (val) => val.split(',').map(el => parseInt(el))],
 		get: async (url, key, cats) => {
-			const sonarrIndexers = `${url}/api/indexer?apikey=${key}`;
+			const reqUrl = `${url}/api/indexer?apikey=${key}`;
 
-			const response = await axios.get(sonarrIndexers);
+			const response = await axios.get(reqUrl);
 			const indexers = [];
 
 			for (const i in response.data) {
@@ -202,9 +202,9 @@ module.exports = {
 		defaults: [undefined, undefined, '3000,3010,3020,3030,3040'],
 		process: [undefined, undefined, (val) => val.split(',').map(el => parseInt(el))],
 		get: async (url, key, cats) => {
-			const sonarrIndexers = `${url}/api/v1/indexer?apikey=${key}`;
+			const reqUrl = `${url}/api/v1/indexer?apikey=${key}`;
 
-			const response = await axios.get(sonarrIndexers);
+			const response = await axios.get(reqUrl);
 			const indexers = [];
 
 			for (const i in response.data) {
