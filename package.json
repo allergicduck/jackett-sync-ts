@@ -1,6 +1,6 @@
 {
   "name": "jackett-sync",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "index.js",
   "author": "Łukasz Mariański <lmarianski@protonmail.com>",
   "license": "GPL-3.0",
