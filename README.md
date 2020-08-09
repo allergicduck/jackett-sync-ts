@@ -33,5 +33,5 @@ Edit `services.js`, add a new service with the `get` method, and set the `source
 Edit `services.js`, add a new service with the `get` (same as with indexer sources), `add` (consume a singular indexer object and add to the upstream service) and `shouldAdd` (use this to filter out indexers that don't provide the correct categories) methods.
 Error handling is very rudimentary to say the least, but its good enough for the time being.
 
-# Usenet support
+## Usenet support
 Theoretically it should work, but as stated earlier untested
