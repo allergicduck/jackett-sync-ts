@@ -43,3 +43,8 @@ Error handling is very rudimentary to say the least, but its good enough for the
 
 ## Usenet support
 Theoretically it should work, but as stated earlier untested
+
+## TODO
+
+- [] Add options to change indexer settings (min seeders etc.)
+- Other stuff maybe
