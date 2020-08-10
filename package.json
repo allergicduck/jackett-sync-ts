@@ -5,6 +5,10 @@
   "main": "index.js",
   "author": "Łukasz Mariański <lmarianski@protonmail.com>",
   "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lmarianski/jackett-sync"
+  },
   "scripts": {
     "start": "node --trace-warnings .",
     "testsc": "node test.js"
@@ -12,7 +16,7 @@
   "dependencies": {
     "axios": "^0.19.2",
     "commander": "^6.0.0",
-    "xml2json": "^0.12.0"
+    "fast-xml-parser": "^3.17.4"
   },
   "bin": "./index.js"
 }

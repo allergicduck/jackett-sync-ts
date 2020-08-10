@@ -1,5 +1,11 @@
 const axios = require("axios");
-const parser = require("xml2json");
+const parser = require("fast-xml-parser");
+
+const parseOpts = {
+	attributeNamePrefix : "",
+	ignoreAttributes : false,
+	// parseTrueNumberOnly: false
+}
 
 const indexerRegex = /.*\/api\/v2.0\/indexers\/(?<id>.*)\/results\/torznab\//;
 
@@ -32,7 +38,10 @@ module.exports = {
 			const jackettIndexers = `${url}/api/v2.0/indexers/all/results/torznab/api?apikey=${apikey}&t=indexers&configured=true`;
 
 			const response = await axios.get(jackettIndexers);
-			const indexers = parser.toJson(response.data, { object: true }).indexers.indexer;
+			// console.log(response.data)
+			// console.log(parser.parse(response.data, parseOpts).indexers.indexer[0].caps.categories.category)
+
+			const indexers = parser.parse(response.data, parseOpts).indexers.indexer;
 
 			for (const i in indexers) {
 				const entry = indexers[i];
