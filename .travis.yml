@@ -21,7 +21,7 @@ deploy:
     api_key: $NPM_AUTH_TOKEN
     on:
       tags: true
-    tag: next
+    # tag: next
   - provider: script
     script: bash docker_push.sh
     on:
