@@ -11,6 +11,7 @@
   },
   "scripts": {
     "start": "node --trace-warnings .",
+    "test": "exit 0",
     "testsc": "node test.js"
   },
   "dependencies": {
