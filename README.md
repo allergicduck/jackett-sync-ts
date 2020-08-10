@@ -29,6 +29,7 @@ services:
       LIDARR_KEY:     
 # ... Lidarr, Sonarr, etc. config
 ```
+Right now it just runs the script in a loop, but you should be able to adjust `./docker/cron` to change frequency.
 
 ## Usage
 Services declare required and optional parameters in the `services.js` file, you can supply them on the command line with `--<param name> <value>`. If the correct required params are detected, the line "Found config for \<service name>" will appear in the console. You can view all options with `--help`
