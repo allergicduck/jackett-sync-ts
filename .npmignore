@@ -3,3 +3,4 @@ images
 .vscode
 Dockerfile
 *.txt
+*.sh
