@@ -38,10 +38,15 @@ module.exports = {
 			const jackettIndexers = `${url}/api/v2.0/indexers/all/results/torznab/api?apikey=${apikey}&t=indexers&configured=true`;
 
 			const response = await axios.get(jackettIndexers);
-			// console.log(response.data)
 			// console.log(parser.parse(response.data, parseOpts).indexers.indexer[0].caps.categories.category)
 
-			const indexers = parser.parse(response.data, parseOpts).indexers.indexer;
+			const parsedXML = parser.parse(response.data, parseOpts);
+			
+			if (parsedXML.error) {
+				throw new Error("Jackett: "+parsedXML.error.description);
+			}
+
+			const indexers = parsedXML.indexers.indexer;
 
 			for (const i in indexers) {
 				const entry = indexers[i];
