@@ -15,18 +15,18 @@ docker-compose.yml example:
 version: "3"
 
 services:
-	jackett-sync:
-		image: m00nwatcher/jackett-sync
-		environment:
-			URL: http://jackett:9117
-			APIKEY: 
-			# ALTURL: http://jackett:9117 # If running with network_mode: host, like in ./docker/docker-compose.yml
-			SONARR_URL: http://sonarr:8989
-			SONARR_KEY: 
-			RADARR_URL: http://radarr:7878
-			RADARR_KEY: 
-			LIDARR_URL: http://lidarr:8686
-			LIDARR_KEY:     
+  jackett-sync:
+    image: m00nwatcher/jackett-sync
+    environment:
+      URL: http://jackett:9117
+      APIKEY: 
+      # ALTURL: http://jackett:9117 # If running with network_mode: host, like in ./docker/docker-compose.yml
+      SONARR_URL: http://sonarr:8989
+      SONARR_KEY: 
+      RADARR_URL: http://radarr:7878
+      RADARR_KEY: 
+      LIDARR_URL: http://lidarr:8686
+      LIDARR_KEY:     
 # ... Lidarr, Sonarr, etc. config
 ```
 
