@@ -4,3 +4,4 @@ images
 Dockerfile
 *.txt
 *.sh
+docker

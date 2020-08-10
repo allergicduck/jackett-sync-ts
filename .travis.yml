@@ -23,6 +23,6 @@ deploy:
       tags: true
     # tag: next
   # - provider: script
-    # script: bash docker_push.sh
+    # script: bash ./docker/docker_push.sh
     # on:
       # tags: true
