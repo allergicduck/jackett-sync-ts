@@ -9,6 +9,9 @@ cache: yarn
 
 # before_install:
 
+install:
+  - yarn install --immutable
+
 script:
   - docker build -t m00nwatcher/jackett-sync .
 
