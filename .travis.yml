@@ -2,8 +2,8 @@ language: node_js
 node_js:
   - lts/*
 
-services:
-  - docker
+# services:
+  # - docker
 
 cache: yarn
 
@@ -12,8 +12,8 @@ cache: yarn
 install:
   - yarn install --immutable
 
-script:
-  - docker build -t m00nwatcher/jackett-sync .
+# script:
+  # - docker build -t m00nwatcher/jackett-sync .
 
 deploy:
   - provider: npm
@@ -22,7 +22,7 @@ deploy:
     on:
       tags: true
     # tag: next
-  - provider: script
-    script: bash docker_push.sh
-    on:
-      tags: true
+  # - provider: script
+    # script: bash docker_push.sh
+    # on:
+      # tags: true
