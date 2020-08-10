@@ -1,4 +1,4 @@
-# Jackett-Sync
+# Jackett-Sync [![Build Status](https://travis-ci.com/lmarianski/jackett-sync.svg?branch=master)](https://travis-ci.com/lmarianski/jackett-sync)
 
 A quick & dirty extensible Jackett-to-Sonarr/Radarr/Lidarr/Whatever indexer synchronizer written in Node.js. PRs are welcome!
 
