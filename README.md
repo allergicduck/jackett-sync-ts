@@ -8,7 +8,7 @@ A quick & dirty extensible Jackett-to-Sonarr/Radarr/Lidarr/Whatever indexer sync
 npm i -g jackett-sync
 ```
 ### Docker
-An image is available at `m00nwatcher/jackett-sync`
+An image is available at [`m00nwatcher/jackett-sync`](https://hub.docker.com/repository/docker/m00nwatcher/jackett-sync)
 
 docker-compose.yml example:
 ```yml
