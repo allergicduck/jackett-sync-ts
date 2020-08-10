@@ -8,7 +8,27 @@ A quick & dirty extensible Jackett-to-Sonarr/Radarr/Lidarr/Whatever indexer sync
 npm i -g jackett-sync
 ```
 ### Docker
-Soon(TM) i'll make a docker image with cron to run this periodically (or altrnatively find a way to do it whenever stuff changes in Jackett)
+An image is available at `m00nwatcher/jackett-sync`
+
+docker-compose.yml example:
+```yml
+version: "3"
+
+services:
+	jackett-sync:
+		image: m00nwatcher/jackett-sync
+		environment:
+			URL: http://jackett:9117
+			APIKEY: 
+			# ALTURL: http://jackett:9117 # If running with network_mode: host, like in ./docker/docker-compose.yml
+			SONARR_URL: http://sonarr:8989
+			SONARR_KEY: 
+			RADARR_URL: http://radarr:7878
+			RADARR_KEY: 
+			LIDARR_URL: http://lidarr:8686
+			LIDARR_KEY:     
+# ... Lidarr, Sonarr, etc. config
+```
 
 ## Usage
 Services declare required and optional parameters in the `services.js` file, you can supply them on the command line with `--<param name> <value>`. If the correct required params are detected, the line "Found config for \<service name>" will appear in the console. You can view all options with `--help`
