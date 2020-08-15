@@ -6,23 +6,25 @@ const body = {
   supportsRss: true,
   supportsSearch: true,
   protocol: 'torrent',
-  name: 'aaaa',
+  name: '1337x',
+  id: 31,
   fields: [
     { name: 'baseUrl', value: 'http://jackett:9117/jackett/api/v2.0/indexers/1337x/results/torznab/' },
     { name: 'apiPath', value: '/api' },
     { name: 'apiKey', value: 'sen08b96xf8x1o3twv9n1aml8da8p7mp' },
-    { name: 'categories', value: [3000, 3010, 3020, 3030, 3040] },
-    { name: 'earlyReleaseLimit' },
+    { name: 'categories', value: [5000, 5030, 5040] },
+    { name: 'animeCategories', value: [] },
     { name: 'additionalParameters' },
-    { name: 'minimumSeeders', value: 1 },
+    { name: 'minimumSeeders', value: 4 },
     { name: 'seedCriteria.seedRatio' },
     { name: 'seedCriteria.seedTime' },
-    { name: 'seedCriteria.discographySeedTime' }
+    { name: 'seedCriteria.seasonPackSeedTime' }
   ],
   implementationName: 'Torznab',
   implementation: 'Torznab',
   configContract: 'TorznabSettings',
-  tags: []
+  // infoLink: 'https://github.com/Sonarr/Sonarr/wiki/Supported-Indexers#torznab',
+  tags: [],
 }
 
-axios.post('https://localhost/lidarr/api/v1/indexer?apikey=0e0d8c9fa9234ffaa81c501d37d926a8', body).catch(e => console.error(e))
+axios.put('http://localhost:8989/sonarr/api/v3/indexer/31?apikey=b27b78ff3e994da1b4460f40e576a029', body).catch(e => console.error(e))

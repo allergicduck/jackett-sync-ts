@@ -6,6 +6,8 @@ const services = require("./services.js");
 const program = new Command();
 
 program
+	.option("-s, --sync", "Synchronize indexers and their options (instead of just adding them)")
+	// .option("-sd, --seeds <num>", "Minimum no. of seeds")
 // .option("-k, --apikey <key>", "Jackett API Key")
 // .option("-u, --url <url>", "Jackett URL", "http://127.0.0.1:9117")
 // .option("-au, --alturl <url>", "Alternative Jackett URI (for use when adding to sevices, default = --uri)")
@@ -18,7 +20,16 @@ for (const i in services) {
 	for (const j in service.params) {
 		const param = service.params[j];
 
-		program.option(`--${param} <${param}>`, "", service.defaults && service.defaults[j] ? service.defaults[j] : undefined);
+		const defaults = service.defaults && service.defaults[j] ? service.defaults[j] : undefined;
+
+		const long = `--${param}`;
+		const paramStr = `${long} <${defaults ? typeof defaults : param}>`;
+
+		// console.log(defaults)
+
+		if (!program.options.some(el=>el.long===long)) {
+			program.option(paramStr, "", defaults);
+		}
 	}
 }
 
@@ -78,13 +89,26 @@ async function sync(service, to, name) {
 
 		const promises = [];
 		const toAddIds = [];
-
+		
 		to.filter(el => !idList.includes(el.id))
 			.filter(el => service.shouldAdd(...params, el))
 			.forEach(el => {
 				toAddIds.push(el.id);
 				promises.push(service.add(...params, el));
 			});
+
+		if (program.sync && service.shouldUpdate) {
+			const existingIndexers = await service.get(...params);
+			const existingIds = existingIndexers.map(el=>el.id);
+
+			to
+			.filter(el => existingIds.includes(el.id))
+			.filter(el => service.shouldUpdate(...params, existingIndexers.find(e=>e.id===el.id), el))
+			.forEach(el => {
+				// toAddIds.push(el.id);
+				promises.push(service.update(...params, existingIndexers.find(e=>e.id===el.id), el));
+			});			
+		}
 
 		if (toAddIds.length > 0) {
 			console.log(`Adding ${toAddIds.join(', ')} to ${name}`);
