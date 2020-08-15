@@ -101,6 +101,8 @@ async function sync(service, to, name) {
 			const existingIndexers = await service.get(...params);
 			const existingIds = existingIndexers.map(el=>el.id);
 
+			// console.log(ex)
+
 			to
 			.filter(el => existingIds.includes(el.id))
 			.filter(el => service.shouldUpdate(...params, existingIndexers.find(e=>e.id===el.id), el))
@@ -111,9 +113,9 @@ async function sync(service, to, name) {
 		}
 
 		if (toAddIds.length > 0) {
-			console.log(`Adding ${toAddIds.join(', ')} to ${name}`);
+			console.log(`[${name}] Adding ${toAddIds.join(', ')}`);
 		} else {
-			console.log("Nothing do add");
+			console.log(`[${name}] Nothing do add`);
 		}
 		await Promise.all(promises);
 	} catch (e) {

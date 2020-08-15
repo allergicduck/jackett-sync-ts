@@ -209,6 +209,7 @@ module.exports = {
 					protocol: entry.protocol,
 					url: entry.fields[0].value,
 					key: entry.fields[2].value,
+					seeds: entry.fields[6].value,
 					id: undefined,
 					appId: entry.id
 				});
@@ -254,9 +255,9 @@ module.exports = {
 
 			try {
 				const resp = await axios.post(reqUrl, body);
-				console.log(`Added ${indexer.id} successfully`);
+				console.log(`[Sonarr] Added ${indexer.id} successfully`);
 			} catch (e) {
-				console.error(`Failed to add ${indexer.id} to sonarr: ${e.response.data[0].errorMessage}`);
+				console.error(`[Sonarr] Failed to add ${indexer.id}: ${e.response.data[0].errorMessage}`);
 			}
 		},
 		shouldAdd: (url, key, cats, seeds, el) => el.categories.some(r => cats.includes(r)),
@@ -292,9 +293,9 @@ module.exports = {
 
 			try {
 				const resp = await axios.put(reqUrl, body);
-				console.log(`Updated ${indexer.id} successfully`);
+				console.log(`[Sonarr] Updated ${indexer.id} successfully`);
 			} catch (e) {
-				console.error(`Failed to update ${indexer.id} in sonarr: ${e.response.data[0].errorMessage}`);
+				console.error(`[Sonarr] Failed to update ${indexer.id}: ${e.response.data[0].errorMessage}`);
 			}
 		},
 		shouldUpdate: (url, key, cats, seeds, current, indexer) => {
@@ -303,6 +304,8 @@ module.exports = {
 
 			const cr = Object.assign({}, current, mask);
 			const ix = Object.assign({}, indexer, {...mask, seeds: seeds});
+
+			console.log(cr, ix)
 
 			return !deepCompare(cr, ix);
 		}
@@ -321,11 +324,12 @@ module.exports = {
 			for (const i in response.data) {
 				const entry = response.data[i];
 				const indexer = Object.assign({}, schema, {
-					sonarrId: entry.id,
 					title: entry.name,
 					protocol: entry.protocol,
 					url: entry.fields[0].value,
-					id: undefined
+					id: undefined,
+					seeds: entry.fields[8].value,
+					appId: entry.id
 				});
 
 				let match = indexer.url.match(indexerRegex);
@@ -367,12 +371,58 @@ module.exports = {
 
 			try {
 				const resp = await axios.post(reqUrl, body);
-				console.log(`Added ${indexer.id} successfully`);
+				console.log(`[Radarr] Added ${indexer.id} successfully`);
 			} catch (e) {
-				console.error(`Failed to add ${indexer.id} to radarr: ${e.response.data[0].errorMessage}`);
+				console.error(`[Radarr] Failed to add ${indexer.id}: ${e.response.data[0].errorMessage}`);
 			}
 		},
-		shouldAdd: (url, key, cats, seeds, el) => el.categories.some(r => cats.includes(r))
+		shouldAdd: (url, key, cats, seeds, el) => el.categories.some(r => cats.includes(r)),
+		update: async (url, key, cats, seeds, current, indexer) => {
+			const reqUrl = `${url}/api/indexer/${current.appId}?apikey=${key}`
+
+			const body = {
+				enableRss: true,
+				enableAutomaticSearch: true,
+				enableInteractiveSearch: true,
+				supportsRss: true,
+				supportsSearch: true,
+				protocol: indexer.protocol,
+				name: indexer.title,
+				id: current.appId,
+				fields: [
+					{ name: 'BaseUrl', value: indexer.url },
+					{ name: 'MultiLanguages', value: '' },
+					{ name: 'ApiKey', value: indexer.key },
+					{ name: 'Categories', value: cats, },
+					{ name: 'AnimeCategories', value: [] },
+					{ name: 'AdditionalParameters', },
+					{ name: 'RemoveYear', value: false, },
+					{ name: 'SearchByTitle', value: false, },
+					{ name: 'MinimumSeeders', value: seeds, },
+					{ name: 'RequiredFlags', value: '' }
+				],
+				implementationName: 'Torznab',
+				implementation: 'Torznab',
+				configContract: 'TorznabSettings',
+				tags: [],
+			}
+
+			try {
+				const resp = await axios.put(reqUrl, body);
+				console.log(`[Radarr] Updated ${indexer.id} successfully`);
+			} catch (e) {
+				console.error(`[Radarr] Failed to update ${indexer.id}: ${e.response.data[0].errorMessage}`);
+			}
+		},
+		shouldUpdate: (url, key, cats, seeds, current, indexer) => {
+
+			const mask = {categories: undefined, appId: undefined};
+
+			const cr = Object.assign({}, current, mask);
+			const ix = Object.assign({}, indexer, {...mask, seeds: seeds});
+
+			return !deepCompare(cr, ix);
+		}		
 	},
 	lidarr: {
 		params: ['lidarrurl', 'lidarrkey', 'lidarrcats', 'seeds'],
@@ -388,11 +438,12 @@ module.exports = {
 			for (const i in response.data) {
 				const entry = response.data[i];
 				const indexer = Object.assign({}, schema, {
-					sonarrId: entry.id,
 					title: entry.name,
 					protocol: entry.protocol,
 					url: entry.fields[0].value,
-					id: undefined
+					seeds: entry.fields[6].value,
+					id: undefined,
+					appId: entry.id
 				});
 
 				let match = indexer.url.match(indexerRegex);
@@ -405,7 +456,7 @@ module.exports = {
 
 			return indexers;
 		},
-		add: async (url, key, cats, seeders, indexer) => {
+		add: async (url, key, cats, seeds, indexer) => {
 			const reqUrl = `${url}/api/v1/indexer?apikey=${key}`
 
 			const body = {
@@ -436,12 +487,57 @@ module.exports = {
 
 			try {
 				const resp = await axios.post(reqUrl, body);
-				console.log(`Added ${indexer.id} successfully`);
+				console.log(`[Lidarr] Added ${indexer.id} successfully`);
 			} catch (e) {
-				console.error(`Failed to add ${indexer.id} to lidarr: ${e.response.data[0].errorMessage}`);
+				console.error(`[Lidarr] Failed to add ${indexer.id}: ${e.response.data[0].errorMessage}`);
 				// console.error(e)
 			}
 		},
-		shouldAdd: (url, key, cats, seeds, el) => el.categories.some(r => cats.includes(r))
+		shouldAdd: (url, key, cats, seeds, el) => el.categories.some(r => cats.includes(r)),
+		update: async (url, key, cats, seeds, current, indexer) => {
+			const reqUrl = `${url}/api/v1/indexer/${current.appId}?apikey=${key}`
+
+			const body = {
+				enableRss: true,
+				enableAutomaticSearch: true,
+				enableInteractiveSearch: true,
+				supportsRss: true,
+				supportsSearch: true,
+				protocol: indexer.protocol,
+				name: indexer.title,
+				id: current.appId,
+				fields: [
+					{ name: 'baseUrl', value: indexer.url },
+					{ name: 'apiPath', value: '/api' },
+					{ name: 'apiKey', value: indexer.key },
+					{ name: 'categories', value: cats },
+					{ name: 'earlyReleaseLimit' },
+					{ name: 'additionalParameters' },
+					{ name: 'minimumSeeders', value: seeds },
+					{ name: 'seedCriteria.seedRatio' },
+					{ name: 'seedCriteria.seedTime' },
+					{ name: 'seedCriteria.discographySeedTime' }
+				],
+				implementationName: 'Torznab',
+				implementation: 'Torznab',
+				configContract: 'TorznabSettings',
+				tags: [],
+			}
+
+			try {
+				const resp = await axios.put(reqUrl, body);
+				console.log(`[Lidarr] Updated ${indexer.id} successfully`);
+			} catch (e) {
+				console.error(`[Lidarr] Failed to update ${indexer.id}: ${e.response.data[0].errorMessage}`);
+			}
+		},
+		shouldUpdate: (url, key, cats, seeds, current, indexer) => {
+			const mask = {categories: undefined, appId: undefined};
+
+			const cr = Object.assign({}, current, mask);
+			const ix = Object.assign({}, indexer, {...mask, seeds: seeds});
+
+			return !deepCompare(cr, ix);
+		}		
 	},
 }
