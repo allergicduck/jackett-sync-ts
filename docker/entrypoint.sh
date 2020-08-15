@@ -39,9 +39,15 @@ APIKEY="--apikey $APIKEY"
 [[ ! -z "$LIDARR_CATS" ]] && \
   LIDARR_CATS="--lidarrcats $LIDARR_CATS"
 
+[[ ! -z "$SEEDS" ]] && \
+  SEEDS="--seeds $SEEDS"
+
+[[ ! -z "$SYNC" ]] && \
+  SYNC="--sync"  
+
 cd /jackett-sync
 
-yarn start $URL $APIKEY $ALTURL \
+yarn start $SYNC $SEEDS $URL $APIKEY $ALTURL \
 	$SONARR_URL $SONARR_KEY $SONARR_CATS \
 	$RADARR_URL $RADARR_KEY $RADARR_CATS \
 	$LIDARR_URL $LIDARR_KEY $LIDARR_CATS $*
