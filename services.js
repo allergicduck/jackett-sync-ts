@@ -474,7 +474,7 @@ module.exports = {
 					{ name: 'categories', value: cats },
 					{ name: 'earlyReleaseLimit' },
 					{ name: 'additionalParameters' },
-					{ name: 'minimumSeeders', value: seeders },
+					{ name: 'minimumSeeders', value: seeds },
 					{ name: 'seedCriteria.seedRatio' },
 					{ name: 'seedCriteria.seedTime' },
 					{ name: 'seedCriteria.discographySeedTime' }
