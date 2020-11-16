@@ -257,7 +257,7 @@ module.exports = {
 				const resp = await axios.post(reqUrl, body);
 				console.log(`[Sonarr] Added ${indexer.id} successfully`);
 			} catch (e) {
-				console.error(`[Sonarr] Failed to add ${indexer.id}: ${e.response.data[0].errorMessage}`);
+				console.error(`[Sonarr] Failed to add ${indexer.id}: ${e.response.data[0] ? e.response.data[0].errorMessage : e}`);
 			}
 		},
 		shouldAdd: (url, key, cats, seeds, el) => el.categories.some(r => cats.includes(r)),
@@ -295,7 +295,7 @@ module.exports = {
 				const resp = await axios.put(reqUrl, body);
 				console.log(`[Sonarr] Updated ${indexer.id} successfully`);
 			} catch (e) {
-				console.error(`[Sonarr] Failed to update ${indexer.id}: ${e.response.data[0].errorMessage}`);
+				console.error(`[Sonarr] Failed to update ${indexer.id}: ${e.response.data[0] ? e.response.data[0].errorMessage : e}`);
 			}
 		},
 		shouldUpdate: (url, key, cats, seeds, current, indexer) => {
@@ -373,7 +373,7 @@ module.exports = {
 				const resp = await axios.post(reqUrl, body);
 				console.log(`[Radarr] Added ${indexer.id} successfully`);
 			} catch (e) {
-				console.error(`[Radarr] Failed to add ${indexer.id}: ${e.response.data[0].errorMessage}`);
+				console.error(`[Radarr] Failed to add ${indexer.id}: ${e.response.data[0] ? e.response.data[0].errorMessage : e}`);
 			}
 		},
 		shouldAdd: (url, key, cats, seeds, el) => el.categories.some(r => cats.includes(r)),
@@ -411,7 +411,7 @@ module.exports = {
 				const resp = await axios.put(reqUrl, body);
 				console.log(`[Radarr] Updated ${indexer.id} successfully`);
 			} catch (e) {
-				console.error(`[Radarr] Failed to update ${indexer.id}: ${e.response.data[0].errorMessage}`);
+				console.error(`[Radarr] Failed to update ${indexer.id}: ${e.response.data[0] ? e.response.data[0].errorMessage : e}`);
 			}
 		},
 		shouldUpdate: (url, key, cats, seeds, current, indexer) => {
@@ -489,7 +489,7 @@ module.exports = {
 				const resp = await axios.post(reqUrl, body);
 				console.log(`[Lidarr] Added ${indexer.id} successfully`);
 			} catch (e) {
-				console.error(`[Lidarr] Failed to add ${indexer.id}: ${e.response.data[0].errorMessage}`);
+				console.error(`[Lidarr] Failed to add ${indexer.id}: ${e.response.data[0] ? e.response.data[0].errorMessage : e}`);
 				// console.error(e)
 			}
 		},
@@ -528,7 +528,7 @@ module.exports = {
 				const resp = await axios.put(reqUrl, body);
 				console.log(`[Lidarr] Updated ${indexer.id} successfully`);
 			} catch (e) {
-				console.error(`[Lidarr] Failed to update ${indexer.id}: ${e.response.data[0].errorMessage}`);
+				console.error(`[Lidarr] Failed to update ${indexer.id}: ${e.response.data[0] ? e.response.data[0].errorMessage : e}`);
 			}
 		},
 		shouldUpdate: (url, key, cats, seeds, current, indexer) => {
