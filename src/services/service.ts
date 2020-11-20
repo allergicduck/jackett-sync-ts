@@ -1,11 +1,13 @@
 import { Indexer } from '../models/indexer';
 import axios, { AxiosError, AxiosResponse } from 'axios';
+import { arrayEquals } from '../helper';
 
 export abstract class Service {
-    indexerRegex = /.*\/api\/v2.0\/indexers\/(?<id>.*)\/results\/torznab\//;
+    protected indexerRegex = /.*\/api\/v2.0\/indexers\/(?<id>.*)\/results\/torznab\//;
 
     name: string;
     url: string;
+    systemStatusUrl: string;
     key: string;
     categories: number[];
     seeds: number;
@@ -19,13 +21,27 @@ export abstract class Service {
         this.seeds = seeds;
     }
 
+    async validate(): Promise<AxiosResponse> {
+        if(this.url === null || this.url === undefined || this.url === "") {
+            throw new Error(`[${this.name}] No url provided`)
+        }
+
+        if(this.key === null || this.key === undefined || this.key === "") {
+            throw new Error(`[${this.name}] No apiKey provided`)
+        }
+
+        return axios.get(this.systemStatusUrl);
+    }
+
     abstract async getIndexers(): Promise<void>;
 
-    abstract add(indexer: Indexer): Promise<AxiosResponse>;
+    protected abstract add(indexer: Indexer): Promise<AxiosResponse>;
 
-    abstract update(appId: number, indexer: Indexer): Promise<AxiosResponse>;
+    protected abstract update(appId: number, indexer: Indexer): Promise<AxiosResponse>;
 
     protected abstract mapToIndexer(entry): Indexer;
+
+    protected abstract generateDefaultBody(indexer: Indexer);
 
     async sync(jackettIndexers: Indexer[]) {
         const { add, update } = this.checkDifferences(jackettIndexers);
@@ -76,7 +92,7 @@ export abstract class Service {
         });
     }
 
-    checkDifferences(jackettIndexers: Indexer[]): { add: Indexer[], update: Indexer[] } {
+    private checkDifferences(jackettIndexers: Indexer[]): { add: Indexer[], update: Indexer[] } {
         const idList = jackettIndexers.map(el => el.id);
         const serviceIdList = this.indexers.map((indexer) => indexer.id);
 
@@ -110,10 +126,6 @@ export abstract class Service {
 
     protected containsAllWantedCategories(current: Indexer, indexer: Indexer): boolean {
         const availableCategories = this.categories.filter(id => indexer.categories.includes(id));
-        return Service.arrayEquals(current.categories, availableCategories);
-    }
-
-    protected static arrayEquals(arr1, arr2) {
-        return arr1.length === arr2.length && !arr1.some((v) => arr2.indexOf(v) < 0) && !arr2.some((v) => arr1.indexOf(v) < 0);
+        return arrayEquals(current.categories, availableCategories);
     }
 }

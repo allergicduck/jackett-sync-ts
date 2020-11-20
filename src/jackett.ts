@@ -2,12 +2,12 @@ import axios from 'axios';
 import { parse } from 'fast-xml-parser';
 import { Indexer } from './models/indexer';
 import { CategoryEntry, JackettEntry } from './interfaces/JackettEntry';
-import { Config } from './Config';
+import { Config } from './config';
 
 export class Jackett {
     url: string;
     apiKey: string;
-    altUrl?: string;
+    altUrl: string;
     requestUrl: string;
 
     parseOpts = {
@@ -34,23 +34,9 @@ export class Jackett {
             throw new Error('Jackett: ' + parsedXML.error.description);
         }
 
-        const indexers = parsedXML.indexers.indexer as JackettEntry[];
+        const indexers = parsedXML.indexers.indexer;
 
-        return indexers.map((entry) => {
-
-            let categories = Jackett.parseCategories(entry.caps.categories.category);
-
-            return new Indexer(
-                entry.id,
-                0,
-                entry.title,
-                'torrent',
-                categories,
-                0,
-                `${this.altUrl || this.url}/api/v2.0/indexers/${entry.id}/results/torznab/`,
-                this.apiKey,
-            );
-        });
+        return indexers.map((entry) => this.mapToIndexer(entry));
     }
 
     private static parseCategories(category: CategoryEntry[] | CategoryEntry): number[] {
@@ -76,5 +62,21 @@ export class Jackett {
         });
 
         return categories;
+    }
+
+    private mapToIndexer(entry: JackettEntry) {
+
+        let categories = Jackett.parseCategories(entry.caps.categories.category);
+
+        return new Indexer(
+            entry.id,
+            0,
+            entry.title,
+            'torrent',
+            categories,
+            0,
+            `${this.altUrl || this.url}/api/v2.0/indexers/${entry.id}/results/torznab/`,
+            this.apiKey,
+        );
     }
 }

@@ -1,32 +1,30 @@
 import { Service } from './service';
 import axios, { AxiosResponse } from 'axios';
 import { Indexer } from '../models/indexer';
-import { Config } from '../Config';
+import { Config } from '../config';
 import { LidarrEntry, LidarrFieldName } from '../interfaces/LidarrEntry';
 
 export class Lidarr extends Service {
     constructor() {
         const c = Config.lidarr;
         super('Lidarr', c.url, c.apiKey, c.categories, c.seeds);
+        this.systemStatusUrl = `${this.url}/api/v1/system/status?apikey=${this.key}`
     }
 
     async getIndexers(): Promise<void> {
         const reqUrl = `${this.url}/api/v1/indexer?apikey=${this.key}`;
-
         this.indexers = await this.handleIndexersRequest(reqUrl);
     }
 
-    async add(indexer) {
+    protected add(indexer) {
         const reqUrl = `${this.url}/api/v1/indexer?apikey=${this.key}`;
         const body = this.generateDefaultBody(indexer);
 
         return axios.post(reqUrl, body);
-
     }
 
-    async update(appId: number, indexer: Indexer): Promise<AxiosResponse> {
+    protected update(appId: number, indexer: Indexer): Promise<AxiosResponse> {
         const reqUrl = `${this.url}/api/v1/indexer/${appId}?apikey=${this.key}`;
-
         const body = this.generateDefaultBody(indexer);
         body.id = appId;
 

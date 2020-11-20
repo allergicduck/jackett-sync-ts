@@ -2,7 +2,8 @@ import { Service } from './service';
 import axios, { AxiosResponse } from 'axios';
 import { Indexer } from '../models/indexer';
 import { RadarrEntry, RadarrFieldName } from '../interfaces/RadarrEntry';
-import { Config } from '../Config';
+import { Config } from '../config';
+import { arrayEquals } from '../helper';
 
 export class Radarr extends Service {
     animeCategories: number[];
@@ -10,39 +11,28 @@ export class Radarr extends Service {
     constructor() {
         const c = Config.radarr;
         super('Radarr', c.url, c.apiKey, c.categories, c.seeds);
+        this.systemStatusUrl = `${this.url}/api/system/status?apikey=${this.key}`
         this.animeCategories = c.animeCategories;
     }
 
     async getIndexers(): Promise<void> {
         const reqUrl = `${this.url}/api/indexer?apikey=${this.key}`;
-
         this.indexers = await this.handleIndexersRequest(reqUrl);
     }
 
-    add(indexer) {
+    protected add(indexer): Promise<AxiosResponse> {
         const reqUrl = `${this.url}/api/indexer?apikey=${this.key}`;
         const body = this.generateDefaultBody(indexer);
 
         return axios.post(reqUrl, body);
     }
 
-    update(appId: number, indexer: Indexer): Promise<AxiosResponse> {
+    protected update(appId: number, indexer: Indexer): Promise<AxiosResponse> {
         const reqUrl = `${this.url}/api/indexer/${appId}?apikey=${this.key}`;
         const body = this.generateDefaultBody(indexer);
         body.id = appId;
 
         return axios.put(reqUrl, body);
-    }
-
-    shouldAdd(indexer: Indexer) {
-        return indexer.categories.some(category => this.categories.includes(category))
-            || indexer.categories.some(category => this.animeCategories.includes(category));
-    }
-
-    containsAllWantedCategories(current: Indexer, indexer: Indexer): boolean {
-        const availableCategories = this.categories.filter(id => indexer.categories.includes(id));
-        const availableAnimeCategories = this.animeCategories.filter(id => indexer.categories.includes(id));
-        return Service.arrayEquals(current.categories, availableCategories) && Service.arrayEquals(current.animeCategories, availableAnimeCategories);
     }
 
     protected mapToIndexer(entry: RadarrEntry) {
@@ -94,5 +84,16 @@ export class Radarr extends Service {
             configContract: 'TorznabSettings',
             id: undefined,
         };
+    }
+
+    protected shouldAdd(indexer: Indexer): boolean {
+        return indexer.categories.some(category => this.categories.includes(category))
+            || indexer.categories.some(category => this.animeCategories.includes(category));
+    }
+
+    protected containsAllWantedCategories(current: Indexer, indexer: Indexer): boolean {
+        const availableCategories = this.categories.filter(id => indexer.categories.includes(id));
+        const availableAnimeCategories = this.animeCategories.filter(id => indexer.categories.includes(id));
+        return arrayEquals(current.categories, availableCategories) && arrayEquals(current.animeCategories, availableAnimeCategories);
     }
 }
