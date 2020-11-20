@@ -1,14 +1,14 @@
 export interface RadarrEntry {
-    enableRss: true,
-    enableSearch: true,
-    supportsRss: true,
-    supportsSearch: true,
+    enableRss: boolean,
+    enableSearch: boolean,
+    supportsRss: boolean,
+    supportsSearch: boolean,
     protocol: string,
     implementationName: 'Torznab',
     implementation: 'Torznab',
     configContract: 'TorznabSettings',
-    name: string,
     id?: number,
+    name: string,
     fields: RadarrField[],
 }
 

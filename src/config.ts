@@ -31,7 +31,7 @@ export class Config {
     public static readerr = {
         url: process.env.READERR_URL,
         apiKey: process.env.READERR_KEY,
-        categories: [3000, 3010, 3020, 3030, 3040],
+        categories: [7020, 8010],
         seeds: 1,
     };
 }

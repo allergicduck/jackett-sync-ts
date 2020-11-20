@@ -8,10 +8,11 @@ import { Radarr } from './services/radarr';
 import { Lidarr } from './services/lidarr';
 import { Service } from './services/service';
 import { JackettIndexer } from './models/jackettIndexer';
+import { Readerr } from './services/readerr';
 
 async function start() {
-    const jackett = new Jackett();
-    const lidarr = new Lidarr(), sonarr = new Sonarr(), radarr = new Radarr();
+    const jackett = new Jackett(), sonarr = new Sonarr(), radarr = new Radarr(), lidarr = new Lidarr(), readerr = new Readerr();
+
     let jackettIndexers: JackettIndexer[];
     try {
         jackett.validate();
@@ -21,9 +22,10 @@ async function start() {
         process.exit(1);
     }
 
-    sync(lidarr, jackettIndexers);
     sync(sonarr, jackettIndexers);
     sync(radarr, jackettIndexers);
+    sync(lidarr, jackettIndexers);
+    sync(readerr, jackettIndexers);
 }
 
 function sync(service: Service, jackettIndexers: JackettIndexer[]) {
@@ -37,7 +39,7 @@ function sync(service: Service, jackettIndexers: JackettIndexer[]) {
             return service.sync(jackettIndexers);
         })
         .then(() => {
-            console.log(`[${service.name}] Sync is done!`)
+            console.log(`[${service.name}] Sync is done!`);
         })
         .catch((error) => {
             console.error(`[${service.name}] Failed:`, error.message);

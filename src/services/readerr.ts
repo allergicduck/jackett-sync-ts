@@ -7,11 +7,13 @@ import { ReaderrEntry, ReaderrFieldName } from '../interfaces/ReaderrEntry';
 
 export class Readerr extends Service {
     constructor() {
-        const c = Config.lidarr;
-        super('Lidarr', '/api/v1', c.url, c.apiKey, c.categories, c.seeds);
+        const c = Config.readerr;
+        super('Readerr', '/api/v1', c.url, c.apiKey, c.categories, c.seeds);
     }
 
     protected mapToIndexer(entry: ReaderrEntry): Indexer {
+        console.log(entry);
+
         const indexer = new Indexer(
             undefined,
             entry.id,
@@ -53,15 +55,15 @@ export class Readerr extends Service {
                 { name: ReaderrFieldName.earlyReleaseLimit },
                 { name: ReaderrFieldName.additionalParameters },
                 { name: ReaderrFieldName.minimumSeeders, value: this.seeds },
-                { name: ReaderrFieldName.seedRatio },
                 { name: ReaderrFieldName.seedTime },
+                { name: ReaderrFieldName.seedRatio },
                 { name: ReaderrFieldName.discographySeedTime },
             ],
             implementationName: 'Torznab',
             implementation: 'Torznab',
             configContract: 'TorznabSettings',
             tags: [],
-            id: undefined,
+            id: undefined
         };
     }
 }

@@ -1,27 +1,23 @@
 export interface ReaderrEntry {
-    enableRss: true,
-    enableAutomaticSearch: true,
-    enableInteractiveSearch: true,
-    supportsRss: true,
-    supportsSearch: true,
+    enableRss: boolean,
+    enableAutomaticSearch: boolean,
+    enableInteractiveSearch: boolean,
+    supportsRss: boolean,
+    supportsSearch: boolean,
     protocol: string,
     priority: number,
     implementationName: 'Torznab',
     implementation: 'Torznab',
     configContract: 'TorznabSettings',
-    tags: [],
-    name: string,
+    tags: []
     id?: number
+    name: string,
     fields: ReaderrField[],
 }
 
 export interface ReaderrField {
-    order?: number,
     name: ReaderrFieldName,
-    label?: string,
     value?: any,
-    type?: string,
-    advanced?: boolean
 }
 
 export enum ReaderrFieldName {
