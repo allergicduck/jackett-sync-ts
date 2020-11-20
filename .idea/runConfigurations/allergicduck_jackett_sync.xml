@@ -4,6 +4,7 @@
       <settings>
         <option name="imageTag" value="allergicduck/jackett-sync:latest" />
         <option name="buildCliOptions" value="" />
+        <option name="buildOnly" value="true" />
         <option name="command" value="" />
         <option name="containerName" value="jackett-sync" />
         <option name="entrypoint" value="" />

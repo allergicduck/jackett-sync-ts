@@ -36,6 +36,9 @@ function sync(service: Service, jackettIndexers: JackettIndexer[]) {
             console.log(`[${service.name}] Starting sync`);
             return service.sync(jackettIndexers);
         })
+        .then(() => {
+            console.log(`[${service.name}] Sync is done!`)
+        })
         .catch((error) => {
             console.error(`[${service.name}] Failed:`, error.message);
         });
