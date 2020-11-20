@@ -28,9 +28,9 @@ export class Config {
         seeds: 1,
     };
 
-    public static readerr = {
-        url: process.env.READERR_URL,
-        apiKey: process.env.READERR_KEY,
+    public static readarr = {
+        url: process.env.READARR_URL,
+        apiKey: process.env.READARR_KEY,
         categories: [7020, 8010],
         seeds: 1,
     };

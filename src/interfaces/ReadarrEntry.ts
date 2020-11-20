@@ -1,4 +1,4 @@
-export interface ReaderrEntry {
+export interface ReadarrEntry {
     enableRss: boolean,
     enableAutomaticSearch: boolean,
     enableInteractiveSearch: boolean,
@@ -12,15 +12,15 @@ export interface ReaderrEntry {
     tags: []
     id?: number
     name: string,
-    fields: ReaderrField[],
+    fields: ReadarrField[],
 }
 
-export interface ReaderrField {
-    name: ReaderrFieldName,
+export interface ReadarrField {
+    name: ReadarrFieldName,
     value?: any,
 }
 
-export enum ReaderrFieldName {
+export enum ReadarrFieldName {
     baseUrl = 'baseUrl',
     apiPath = 'apiPath',
     apiKey = 'apiKey',

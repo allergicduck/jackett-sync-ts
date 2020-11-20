@@ -8,10 +8,10 @@ import { Radarr } from './services/radarr';
 import { Lidarr } from './services/lidarr';
 import { Service } from './services/service';
 import { JackettIndexer } from './models/jackettIndexer';
-import { Readerr } from './services/readerr';
+import { Readarr } from './services/readarr';
 
 async function start() {
-    const jackett = new Jackett(), sonarr = new Sonarr(), radarr = new Radarr(), lidarr = new Lidarr(), readerr = new Readerr();
+    const jackett = new Jackett(), sonarr = new Sonarr(), radarr = new Radarr(), lidarr = new Lidarr(), readarr = new Readarr();
 
     let jackettIndexers: JackettIndexer[];
     try {
@@ -25,7 +25,7 @@ async function start() {
     sync(sonarr, jackettIndexers);
     sync(radarr, jackettIndexers);
     sync(lidarr, jackettIndexers);
-    sync(readerr, jackettIndexers);
+    sync(readarr, jackettIndexers);
 }
 
 function sync(service: Service, jackettIndexers: JackettIndexer[]) {

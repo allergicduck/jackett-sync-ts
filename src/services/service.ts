@@ -5,7 +5,7 @@ import { JackettIndexer } from '../models/jackettIndexer';
 import { SonarrEntry } from '../interfaces/SonarrEntry';
 import { RadarrEntry } from '../interfaces/RadarrEntry';
 import { LidarrEntry } from '../interfaces/LidarrEntry';
-import { ReaderrEntry } from '../interfaces/ReaderrEntry';
+import { ReadarrEntry } from '../interfaces/ReadarrEntry';
 
 export abstract class Service {
     protected indexerRegex = /.*\/api\/v2.0\/indexers\/(?<id>.*)\/results\/torznab\//;
