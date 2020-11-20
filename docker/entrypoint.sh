@@ -1,3 +1,3 @@
 #!/bin/sh
 
-cd /jackett-sync && npm run start:build
+cd /jackett-sync && node dist/src/main.js

@@ -1,19 +1,16 @@
-version: "3"
+version: '3'
 
 services:
   jackett-sync:
-    # image: m00nwatcher/jackett-sync
     network_mode: host
-    build:
-      dockerfile: ./docker/Dockerfile
-      context: ..
+    image: allergicduck/jackett-sync
     environment:
-      JACKETT_URL: http://localhost:9117/jackett
-      JACKETT_KEY: sen08b96xf8x1o3twv9n1aml8da8p7mp
-      JACKETT_ALTURL: http://jackett:9117/jackett
-      SONARR_URL: http://localhost:8989/sonarr
-      SONARR_KEY: b27b78ff3e994da1b4460f40e576a029
-      RADARR_URL: http://localhost:7878/radarr
-      RADARR_KEY: b2af47b281e944b2b446cafc6a2832db
-      LIDARR_URL: http://localhost:8686/
-      LIDARR_KEY: 0e0d8c9fa9234ffaa81c501d37d926a8
+      - JACKETT_URL=http://172.18.0.2:9117
+      - JACKETT_ALTURL=http://localhost:9117
+      - JACKETT_KEY=z9ukkyubjmvzm8ey3jyxyywrva1py4cb
+      - LIDARR_URL=http://172.18.0.2:8686
+      - LIDARR_KEY=9280f2659f694f659ba87249df5b1a2f
+      - RADARR_URL=http://172.18.0.2:7878
+      - RADARR_KEY=0b8e12562f914a0cb7354f7f9a0731a4
+      - SONARR_URL=http://172.18.0.2:8989
+      - SONARR_KEY=7d650afd0a574d1e8c1665c290c011b9

@@ -12,14 +12,14 @@ import { JackettIndexer } from './models/jackettIndexer';
 async function start() {
     const jackett = new Jackett();
     const lidarr = new Lidarr(), sonarr = new Sonarr(), radarr = new Radarr();
-
+    let jackettIndexers: JackettIndexer[];
     try {
         jackett.validate();
+        jackettIndexers = await jackett.getIndexers();
     } catch (error) {
-
+        console.error(`[${jackett.name}] Couldn't get indexers`, error.message);
+        process.exit(1);
     }
-
-    const jackettIndexers = await jackett.getIndexers();
 
     sync(lidarr, jackettIndexers);
     sync(sonarr, jackettIndexers);

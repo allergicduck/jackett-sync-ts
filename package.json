@@ -10,7 +10,8 @@
     "url": "https://github.com/lmarianski/jackett-sync"
   },
   "scripts": {
-    "start": "ts-node --pretty src/main.ts"
+    "start": "ts-node --pretty src/main.ts",
+    "build": "tsc"
   },
   "dependencies": {
     "@types/node": "^14.14.8",

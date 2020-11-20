@@ -35,7 +35,7 @@ export class Jackett {
 
     async getIndexers(): Promise<JackettIndexer[]> {
         const requestUrl = `${this.url}/api/v2.0/indexers/all/results/torznab/api?apikey=${this.apiKey}&t=indexers&configured=true`;
-        const response = await axios.get(requestUrl);
+        const response = await axios.get(requestUrl).catch((error) => {throw error});
 
         const parsedXML = parse(response.data, parseOpts);
 
