@@ -6,7 +6,7 @@ import { FieldName, SonarrEntry } from '../interfaces/SonarrEntry';
 export class Sonarr extends Service {
     animeCategories: number[];
 
-    constructor(url: string, key: string, categories = [5000, 5030, 5040], animeCategories = [5070], seeds = 1) {
+    constructor(url: string, key: string, categories: number[], animeCategories: number[], seeds: number) {
         super(url, key, categories, seeds);
         this.animeCategories = animeCategories;
     }
@@ -35,7 +35,6 @@ export class Sonarr extends Service {
 
             return indexer;
         });
-
     }
 
     async add(indexer: Indexer) {
@@ -45,7 +44,11 @@ export class Sonarr extends Service {
 
         try {
             const resp = await axios.post(reqUrl, body);
-            console.log(`[Sonarr] Added ${indexer.id} successfully`);
+            if(resp.status == 201) {
+                console.log(`[Sonarr] Added ${indexer.id} successfully`);
+            } else {
+                console.error(`[Sonarr] Failed to add ${indexer.id}: ${resp.data[0] ? resp.data[0].errorMessage : ""}`);
+            }
         } catch (e) {
             console.error(`[Sonarr] Failed to add ${indexer.id}: ${e.response.data[0] ? e.response.data[0].errorMessage : e}`);
         }
