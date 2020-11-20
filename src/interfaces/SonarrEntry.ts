@@ -1,31 +1,30 @@
 export interface SonarrEntry {
-    enableRss: boolean,
-    enableAutomaticSearch: boolean,
-    enableInteractiveSearch: boolean,
-    supportsRss: boolean,
-    supportsSearch: boolean,
-    protocol: 'torrent',
+    enableRss: true,
+    enableAutomaticSearch: true,
+    enableInteractiveSearch: true,
+    supportsRss: true,
+    supportsSearch: true,
+    protocol: string,
     priority: number,
-    name: string,
-    fields: Field[],
     implementationName: 'Torznab',
     implementation: 'Torznab',
     configContract: 'TorznabSettings',
-    infoLink: string,
     tags: [],
+    name: string,
     id: number
+    fields: SonarrField[],
 }
 
-export interface Field {
-    order: number,
-    name: FieldName,
-    label: string,
-    value: any,
-    type: string,
-    advanced: boolean
+export interface SonarrField {
+    order?: number,
+    name: SonarrFieldName,
+    label?: string,
+    value?: any,
+    type?: string,
+    advanced?: boolean
 }
 
-export enum FieldName {
+export enum SonarrFieldName {
     baseUrl = "baseUrl",
     apiPath = "apiPath",
     apiKey = "apiKey",

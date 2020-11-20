@@ -1,142 +1,119 @@
 import { Indexer } from '../models/indexer';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 
-export class Service {
+export abstract class Service {
     indexerRegex = /.*\/api\/v2.0\/indexers\/(?<id>.*)\/results\/torznab\//;
 
+    name: string;
     url: string;
     key: string;
     categories: number[];
     seeds: number;
+    indexers: Indexer[];
 
-    constructor(url: string, key: string, categories: number[], seeds: number) {
+    protected constructor(name: string, url: string, key: string, categories: number[], seeds: number) {
+        this.name = name;
         this.url = url;
         this.key = key;
         this.categories = categories;
         this.seeds = seeds;
     }
 
-    async get(): Promise<Indexer[]> {
-        return;
+    abstract async getIndexers(): Promise<void>;
+
+    abstract add(indexer: Indexer): Promise<AxiosResponse>;
+
+    abstract update(appId: number, indexer: Indexer): Promise<AxiosResponse>;
+
+    protected abstract mapToIndexer(entry): Indexer;
+
+    async sync(jackettIndexers: Indexer[]) {
+        const { add, update } = this.checkDifferences(jackettIndexers);
+
+        const addPromises = add.map(async (indexer) => {
+            return this.handleRequest(this.add(indexer));
+        });
+
+        const updatePromises = update.map(async (indexer) => {
+            const appId = this.indexers.find((existingIndexer) => existingIndexer.id === indexer.id).appId;
+            return this.handleRequest(this.update(appId, indexer));
+        });
+
+        return await Promise.all(addPromises) && await Promise.all(updatePromises);
     }
 
-    async add(indexer) {
-        return;
+    protected handleIndexersRequest(url: string): Promise<Indexer[]> {
+        return axios.get(url)
+            .then((response) => response.data.map((entry) => this.mapToIndexer(entry)))
+            .catch((error) => {
+                if (error && error.response) {
+                    const axiosError = error as AxiosError;
+                    console.error(`[${this.name}][${axiosError.response.status}] Couldn't get indexes, error: ${JSON.stringify(axiosError.response.data)}, url: ${axiosError.config.url}`);
+                } else {
+                    console.error(`[${this.name}] Unexpected error during request`, error);
+                }
+                throw error;
+            });
     }
 
-    async update(current, indexer) {
-        return;
+    private handleRequest(axiosResponsePromise: Promise<AxiosResponse>) {
+        return axiosResponsePromise.then((response) => {
+            if (response.status == 201) {
+                console.log(`[${this.name}] Added ${response.data.name} successfully!`);
+            } else if (response.status == 202) {
+                console.log(`[${this.name}] Updated ${response.data.name} successfully!`);
+            } else {
+                console.log(`[${this.name}] Request successful, but unknown responseStatus`, response.data.name);
+            }
+        }).catch((error) => {
+            if (error && error.response) {
+                const axiosError = error as AxiosError;
+                const data = JSON.parse(error.response.config.data);
+                console.error(`[${this.name}][${axiosError.response.status}] Something went wrong with ${data.name}, error: ${axiosError.response.data[0]?.errorMessage}`);
+            } else {
+                console.error(`[${this.name}] Unexpected error during request`, error);
+            }
+        });
     }
 
-    shouldAdd(indexer: Indexer) {
+    checkDifferences(jackettIndexers: Indexer[]): { add: Indexer[], update: Indexer[] } {
+        const idList = jackettIndexers.map(el => el.id);
+        const serviceIdList = this.indexers.map((indexer) => indexer.id);
+
+        const diff = idList.filter((id) => !serviceIdList.includes(id));
+        const shouldBeAddedIndexers = diff.map((indexersId) => {
+            const indexer = jackettIndexers.find((indexer) => indexer.id == indexersId);
+            if (this.shouldAdd(indexer)) {
+                return indexer;
+            }
+        }).filter(exists => exists);
+
+        const same = idList.filter((id) => serviceIdList.includes(id));
+        const shouldBeUpdatedIndexers = same.map((indexersId) => {
+            const jacketIndexer = jackettIndexers.find((indexer) => indexer.id == indexersId);
+            const existingIndexer = this.indexers.find((indexer) => indexer.id == indexersId);
+            if (this.shouldUpdate(existingIndexer, jacketIndexer)) {
+                return jacketIndexer;
+            }
+        }).filter(exists => exists);
+
+        return { add: shouldBeAddedIndexers, update: shouldBeUpdatedIndexers };
+    }
+
+    protected shouldAdd(indexer: Indexer) {
         return indexer.categories.some(category => this.categories.includes(category));
     }
 
-    shouldUpdate(current, indexer) {
-        const mask = { categories: undefined, appId: undefined };
-
-        const cr = (<any>Object).assign({}, current, mask);
-        const ix = (<any>Object).assign({}, indexer, { ...mask, seeds: this.seeds });
-
-        return !Service.deepCompare(cr, ix);
+    protected shouldUpdate(current: Indexer, indexer: Indexer) {
+        return !current.compare(indexer) || !this.containsAllWantedCategories(current, indexer);
     }
 
-    private static deepCompare(x, y) {
-        let i, l, leftChain, rightChain;
-        leftChain = []; //Todo: this can be cached
-        rightChain = [];
+    protected containsAllWantedCategories(current: Indexer, indexer: Indexer): boolean {
+        const availableCategories = this.categories.filter(id => indexer.categories.includes(id));
+        return Service.arrayEquals(current.categories, availableCategories);
+    }
 
-        function compare2Objects(x, y) {
-            let p;
-
-            // remember that NaN === NaN returns false
-            // and isNaN(undefined) returns true
-            if (isNaN(x) && isNaN(y) && typeof x === 'number' && typeof y === 'number') {
-                return true;
-            }
-
-            // Compare primitives and functions.
-            // Check if both arguments link to the same object.
-            // Especially useful on the step where we compare prototypes
-            if (x === y) {
-                return true;
-            }
-
-            // Works in case when functions are created in constructor.
-            // Comparing dates is a common scenario. Another built-ins?
-            // We can even handle functions passed across iframes
-            if ((typeof x === 'function' && typeof y === 'function') ||
-                (x instanceof Date && y instanceof Date) ||
-                (x instanceof RegExp && y instanceof RegExp) ||
-                (x instanceof String && y instanceof String) ||
-                (x instanceof Number && y instanceof Number)) {
-                return x.toString() === y.toString();
-            }
-
-            // At last checking prototypes as good as we can
-            if (!(x instanceof Object && y instanceof Object)) {
-                return false;
-            }
-
-            if (x.isPrototypeOf(y) || y.isPrototypeOf(x)) {
-                return false;
-            }
-
-            if (x.constructor !== y.constructor) {
-                return false;
-            }
-
-            if (x.prototype !== y.prototype) {
-                return false;
-            }
-
-            // Check for infinitive linking loops
-            if (leftChain.indexOf(x) > -1 || rightChain.indexOf(y) > -1) {
-                return false;
-            }
-
-            // Quick checking of one object being a subset of another.
-            // todo: cache the structure of arguments[0] for performance
-            for (p in y) {
-                if (y.hasOwnProperty(p) !== x.hasOwnProperty(p)) {
-                    return false;
-                } else if (typeof y[p] !== typeof x[p]) {
-                    return false;
-                }
-            }
-
-            for (p in x) {
-                if (y.hasOwnProperty(p) !== x.hasOwnProperty(p)) {
-                    return false;
-                } else if (typeof y[p] !== typeof x[p]) {
-                    return false;
-                }
-
-                switch (typeof (x[p])) {
-                    case 'object':
-                    case 'function':
-
-                        leftChain.push(x);
-                        rightChain.push(y);
-
-                        if (!compare2Objects(x[p], y[p])) {
-                            return false;
-                        }
-
-                        leftChain.pop();
-                        rightChain.pop();
-                        break;
-
-                    default:
-                        if (x[p] !== y[p]) {
-                            return false;
-                        }
-                        break;
-                }
-            }
-
-            return true;
-        }
-
-        return compare2Objects(x, y);
+    protected static arrayEquals(arr1, arr2) {
+        return arr1.length === arr2.length && !arr1.some((v) => arr2.indexOf(v) < 0) && !arr2.some((v) => arr1.indexOf(v) < 0);
     }
 }

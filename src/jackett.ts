@@ -2,6 +2,7 @@ import axios from 'axios';
 import { parse } from 'fast-xml-parser';
 import { Indexer } from './models/indexer';
 import { CategoryEntry, JackettEntry } from './interfaces/JackettEntry';
+import { Config } from './Config';
 
 export class Jackett {
     url: string;
@@ -14,10 +15,12 @@ export class Jackett {
         ignoreAttributes: false,
     };
 
-    constructor(url: string, apiKey: string, altUrl?: string) {
-        this.url = url;
-        this.altUrl = altUrl;
-        this.apiKey = apiKey;
+    constructor() {
+        const c = Config.jackett;
+
+        this.url = c.url;
+        this.altUrl = c.altUrl;
+        this.apiKey = c.apiKey;
 
         this.requestUrl = `${this.url}/api/v2.0/indexers/all/results/torznab/api?apikey=${this.apiKey}&t=indexers&configured=true`;
     }

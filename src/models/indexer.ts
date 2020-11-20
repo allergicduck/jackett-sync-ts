@@ -4,6 +4,7 @@ export class Indexer {
     title: string;
     protocol: string;
     categories: number[];
+    animeCategories?: number[];
     seeds: number;
     url: string;
     key: string;
@@ -17,7 +18,8 @@ export class Indexer {
         seeds: number,
         url: string,
         key: string,
-    ) {
+        animeCategories?: number[],
+) {
         this.id = id;
         this.appId = appId;
         this.title = title;
@@ -26,5 +28,15 @@ export class Indexer {
         this.seeds = seeds;
         this.url = url;
         this.key = key;
+        this.animeCategories = animeCategories;
+    }
+
+    compare(other: Indexer): boolean {
+        return (
+            this.title === other.title
+            && this.protocol === other.protocol
+            && this.url === other.url
+            && this.key === other.key
+        );
     }
 }
