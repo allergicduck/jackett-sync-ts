@@ -1,5 +1,3 @@
 #!/bin/sh
 
-cd /jackett-sync
-
-npm start
+cd /jackett-sync && npm run start:build
