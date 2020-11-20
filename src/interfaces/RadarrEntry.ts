@@ -8,7 +8,7 @@ export interface RadarrEntry {
     implementation: 'Torznab',
     configContract: 'TorznabSettings',
     name: string,
-    id: number,
+    id?: number,
     fields: RadarrField[],
 }
 

@@ -8,11 +8,9 @@ services:
       dockerfile: ./docker/Dockerfile
       context: ..
     environment:
-      URL: http://localhost:9117/jackett
-      APIKEY: sen08b96xf8x1o3twv9n1aml8da8p7mp
-      ALTURL: http://jackett:9117/jackett
-      SYNC: "yes"
-      SEEDS: 4
+      JACKETT_URL: http://localhost:9117/jackett
+      JACKETT_KEY: sen08b96xf8x1o3twv9n1aml8da8p7mp
+      JACKETT_ALTURL: http://jackett:9117/jackett
       SONARR_URL: http://localhost:8989/sonarr
       SONARR_KEY: b27b78ff3e994da1b4460f40e576a029
       RADARR_URL: http://localhost:7878/radarr

@@ -1,6 +1,8 @@
+import { JackettIndexer } from './jackettIndexer';
+
 export class Indexer {
-    id: string;
-    appId: number;
+    id: string | undefined;
+    appId: number | undefined;
     title: string;
     protocol: string;
     categories: number[];
@@ -10,8 +12,8 @@ export class Indexer {
     key: string;
 
     constructor(
-        id: string,
-        appId: number,
+        id: string | undefined,
+        appId: number | undefined,
         title: string,
         protocol: string,
         categories: number[],
@@ -19,7 +21,7 @@ export class Indexer {
         url: string,
         key: string,
         animeCategories?: number[],
-) {
+    ) {
         this.id = id;
         this.appId = appId;
         this.title = title;
@@ -31,7 +33,7 @@ export class Indexer {
         this.animeCategories = animeCategories;
     }
 
-    compare(other: Indexer): boolean {
+    compare(other: JackettIndexer): boolean {
         return (
             this.title === other.title
             && this.protocol === other.protocol

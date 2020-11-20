@@ -11,7 +11,7 @@ export interface SonarrEntry {
     configContract: 'TorznabSettings',
     tags: [],
     name: string,
-    id: number
+    id?: number
     fields: SonarrField[],
 }
 

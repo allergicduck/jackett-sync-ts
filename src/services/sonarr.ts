@@ -1,38 +1,17 @@
 import { Service } from './service';
-import axios, { AxiosResponse } from 'axios';
 import { Indexer } from '../models/indexer';
 import { SonarrFieldName, SonarrEntry } from '../interfaces/SonarrEntry';
 import { Config } from '../config';
 import { arrayEquals } from '../helper';
+import { JackettIndexer } from '../models/jackettIndexer';
 
 export class Sonarr extends Service {
     animeCategories: number[];
 
     constructor() {
         const c = Config.sonarr;
-        super('Sonarr', c.url, c.apiKey, c.categories, c.seeds);
-        this.systemStatusUrl = `${this.url}/api/v3/system/status?apikey=${this.key}`
+        super('Sonarr', '/api/v3/', c.url, c.apiKey, c.categories, c.seeds);
         this.animeCategories = c.animeCategories;
-    }
-
-    async getIndexers(): Promise<void> {
-        const reqUrl = `${this.url}/api/v3/indexer?apikey=${this.key}`;
-        this.indexers = await this.handleIndexersRequest(reqUrl);
-    }
-
-    protected add(indexer: Indexer): Promise<AxiosResponse> {
-        const reqUrl = `${this.url}/api/v3/indexer?apikey=${this.key}`;
-        const body = this.generateDefaultBody(indexer);
-
-        return axios.post(reqUrl, body);
-    }
-
-    protected update(appId: number, indexer: Indexer): Promise<AxiosResponse> {
-        const reqUrl = `${this.url}/api/v3/indexer/${appId}?apikey=${this.key}`;
-        const body = this.generateDefaultBody(indexer);
-        body.id = appId;
-
-        return axios.put(reqUrl, body);
     }
 
     protected mapToIndexer(entry: SonarrEntry): Indexer {
@@ -41,24 +20,26 @@ export class Sonarr extends Service {
             entry.id,
             entry.name,
             entry.protocol,
-            entry.fields.find((field) => field.name == SonarrFieldName.categories).value,
-            entry.fields.find((field) => field.name == SonarrFieldName.minimumSeeders).value,
-            entry.fields.find((field) => field.name == SonarrFieldName.baseUrl).value,
-            entry.fields.find((field) => field.name == SonarrFieldName.apiKey).value,
-            entry.fields.find((field) => field.name == SonarrFieldName.animeCategories).value,
+            entry.fields.find((field) => field.name == SonarrFieldName.categories)!.value,
+            entry.fields.find((field) => field.name == SonarrFieldName.minimumSeeders)!.value,
+            entry.fields.find((field) => field.name == SonarrFieldName.baseUrl)!.value,
+            entry.fields.find((field) => field.name == SonarrFieldName.apiKey)!.value,
+            entry.fields.find((field) => field.name == SonarrFieldName.animeCategories)!.value,
         );
 
         let match = indexer.url.match(this.indexerRegex);
-        if (match) {
+        if (match && match.groups) {
             indexer.id = match.groups.id;
         }
 
         return indexer;
     }
 
-    protected generateDefaultBody(indexer: Indexer): SonarrEntry {
+    protected generateDefaultBody(indexer: JackettIndexer): SonarrEntry {
         const supportedCategories = this.categories.filter(id => indexer.categories.includes(id));
         const supportedAnimeCategories = this.animeCategories.filter(id => indexer.categories.includes(id));
+
+        this.indexerSpecificConfiguration(indexer, supportedCategories);
 
         return {
             priority: 0,
@@ -89,14 +70,17 @@ export class Sonarr extends Service {
         };
     }
 
-    protected shouldAdd(indexer: Indexer) {
+    protected shouldAdd(indexer: JackettIndexer) {
         return indexer.categories.some(category => this.categories.includes(category))
             || indexer.categories.some(category => this.animeCategories.includes(category));
     }
 
-    protected containsAllWantedCategories(current: Indexer, indexer: Indexer): boolean {
+    protected containsAllWantedCategories(current: Indexer, indexer: JackettIndexer): boolean {
         const availableCategories = this.categories.filter(id => indexer.categories.includes(id));
         const availableAnimeCategories = this.animeCategories.filter(id => indexer.categories.includes(id));
+
+        this.indexerSpecificConfiguration(indexer, current.categories, true);
+
         return arrayEquals(current.categories, availableCategories) && arrayEquals(current.animeCategories, availableAnimeCategories);
     }
 }

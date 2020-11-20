@@ -2,9 +2,18 @@
   "compilerOptions": {
     "module": "commonjs",
     "target": "ES6",
-    "sourceMap": true
+    "sourceMap": true,
+    "outDir": "./dist/",
+    "rootDir": "./",
+    "sourceRoot": "./src",
+    "alwaysStrict": true,
+    "strict": true
   },
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "dist"
+  ],
+  "include": [
+    "src/**/*.ts"
   ]
 }

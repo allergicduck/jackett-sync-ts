@@ -11,7 +11,7 @@ export interface LidarrEntry {
     configContract: 'TorznabSettings',
     tags: [],
     name: string,
-    id: number
+    id?: number
     fields: LidarrField[],
 }
 

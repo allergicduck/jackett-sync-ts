@@ -15,7 +15,7 @@ RUN touch /var/log/cron.log
 
 WORKDIR /jackett-sync
 
-RUN yarn install
+RUN npm install
 
 # ENTRYPOINT [ "/bin/sh", "/entrypoint.sh" ]
 CMD crond & tail -f /var/log/cron.log
