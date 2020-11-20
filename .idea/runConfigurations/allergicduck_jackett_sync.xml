@@ -6,10 +6,9 @@
         <option name="buildCliOptions" value="" />
         <option name="command" value="" />
         <option name="containerName" value="jackett-sync" />
-        <option name="contextFolderPath" value="." />
         <option name="entrypoint" value="" />
         <option name="commandLineOptions" value="" />
-        <option name="sourceFilePath" value="docker/Dockerfile" />
+        <option name="sourceFilePath" value="Dockerfile" />
       </settings>
     </deployment>
     <method v="2" />
