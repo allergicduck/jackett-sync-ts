@@ -1,10 +1,11 @@
 import { Indexer } from '../models/indexer';
 import axios, { AxiosError, AxiosResponse } from 'axios';
-import { arrayEquals } from '../helper';
+import { arrayEquals, Entry } from '../helper';
 import { JackettIndexer } from '../models/jackettIndexer';
 import { SonarrEntry } from '../interfaces/SonarrEntry';
 import { RadarrEntry } from '../interfaces/RadarrEntry';
 import { LidarrEntry } from '../interfaces/LidarrEntry';
+import { ReaderrEntry } from '../interfaces/ReaderrEntry';
 
 export abstract class Service {
     protected indexerRegex = /.*\/api\/v2.0\/indexers\/(?<id>.*)\/results\/torznab\//;
@@ -58,9 +59,9 @@ export abstract class Service {
         return axios.put(reqUrl, body);
     }
 
-    protected abstract mapToIndexer(entry: SonarrEntry | RadarrEntry | LidarrEntry): Indexer;
+    protected abstract mapToIndexer(entry: Entry): Indexer;
 
-    protected abstract generateDefaultBody(indexer: JackettIndexer): SonarrEntry | RadarrEntry | LidarrEntry;
+    protected abstract generateDefaultBody(indexer: JackettIndexer): Entry;
 
     async sync(jackettIndexers: JackettIndexer[]) {
         const { add, update } = this.checkDifferences(jackettIndexers);
@@ -79,7 +80,7 @@ export abstract class Service {
 
     protected handleIndexersRequest(url: string): Promise<Indexer[]> {
         return axios.get(url)
-            .then((response) => response.data.map((entry: SonarrEntry | RadarrEntry | LidarrEntry) => this.mapToIndexer(entry)))
+            .then((response) => response.data.map((entry: Entry) => this.mapToIndexer(entry)))
             .catch((error) => {
                 if (error && error.response) {
                     const axiosError = error as AxiosError;
