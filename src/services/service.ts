@@ -19,11 +19,11 @@ export abstract class Service {
 
     protected checkUrlAndApiKey(url: string | undefined, apiKey: string | undefined) {
         if (url === null || url === undefined || url === '') {
-            throw new Error(`[${this.name}] No url provided`);
+            throw new Error(`No url provided`);
         }
 
         if (apiKey === null || apiKey === undefined || apiKey === '') {
-            throw new Error(`[${this.name}] No apiKey provided`);
+            throw new Error(`No apiKey provided`);
         }
     }
 
