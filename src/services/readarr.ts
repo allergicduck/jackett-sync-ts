@@ -1,19 +1,23 @@
 import { Service } from './service';
 import { Indexer } from '../models/indexer';
 import { Config } from '../config';
-import { LidarrEntry, LidarrFieldName } from '../interfaces/LidarrEntry';
 import { JackettIndexer } from '../models/jackettIndexer';
 import { ReadarrEntry, ReadarrFieldName } from '../interfaces/ReadarrEntry';
+import { ApiRoutes } from '../models/apiRoutes';
+import { getIdFromIndexerUrl } from '../helper';
 
 export class Readarr extends Service {
+    apiRoutes: ApiRoutes;
+
     constructor() {
         const c = Config.readarr;
-        super('Readarr', '/api/v1', c.url, c.apiKey, c.categories, c.seeds);
+        super('Readarr', c.categories, c.seeds);
+        this.checkUrlAndApiKey(c.url, c.apiKey);
+
+        this.apiRoutes = new ApiRoutes(c.url!, '/api/v1', c.apiKey!);
     }
 
     protected mapToIndexer(entry: ReadarrEntry): Indexer {
-        console.log(entry);
-
         const indexer = new Indexer(
             undefined,
             entry.id,
@@ -25,10 +29,7 @@ export class Readarr extends Service {
             entry.fields.find((field) => field.name == ReadarrFieldName.apiKey)!.value,
         );
 
-        let match = indexer.url.match(this.indexerRegex);
-        if (match && match.groups) {
-            indexer.id = match.groups.id;
-        }
+        indexer.id = getIdFromIndexerUrl(indexer.url);
 
         return indexer;
     }

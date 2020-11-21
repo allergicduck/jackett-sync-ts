@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { parse } from 'fast-xml-parser';
-import { CategoryEntry, JackettEntry } from './interfaces/JackettEntry';
-import { Config } from './config';
-import { JackettIndexer } from './models/jackettIndexer';
+import { CategoryEntry, JackettEntry } from '../interfaces/JackettEntry';
+import { Config } from '../config';
+import { JackettIndexer } from '../models/jackettIndexer';
 
 const parseOpts = {
     attributeNamePrefix: '',
@@ -11,31 +11,34 @@ const parseOpts = {
 
 export class Jackett {
     name = 'Jackett';
-    url?: string;
+    url: string;
     altUrl?: string;
-    apiKey?: string;
+    apiKey: string;
 
     constructor() {
         const c = Config.jackett;
+        this.checkUrlAndApiKey(c.url, c.apiKey);
 
-        this.url = c.url;
+        this.url = c.url!;
         this.altUrl = c.altUrl;
-        this.apiKey = c.apiKey;
+        this.apiKey = c.apiKey!;
     }
 
-    validate(): void {
-        if (this.url === null || this.url === undefined || this.url === '') {
+    protected checkUrlAndApiKey(url: string | undefined, apiKey: string | undefined) {
+        if (url === null || url === undefined || url === '') {
             throw new Error(`[${this.name}] No url provided`);
         }
 
-        if (this.apiKey === null || this.apiKey === undefined || this.apiKey === '') {
+        if (apiKey === null || apiKey === undefined || apiKey === '') {
             throw new Error(`[${this.name}] No apiKey provided`);
         }
     }
 
     async getIndexers(): Promise<JackettIndexer[]> {
         const requestUrl = `${this.url}/api/v2.0/indexers/all/results/torznab/api?apikey=${this.apiKey}&t=indexers&configured=true`;
-        const response = await axios.get(requestUrl).catch((error) => {throw error});
+        const response = await axios.get(requestUrl).catch((error) => {
+            throw error;
+        });
 
         const parsedXML = parse(response.data, parseOpts);
 
@@ -57,7 +60,7 @@ export class Jackett {
             'torrent',
             categories,
             `${this.altUrl || this.url}/api/v2.0/indexers/${entry.id}/results/torznab/`,
-            this.apiKey!,
+            this.apiKey,
         );
     }
 

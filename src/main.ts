@@ -2,30 +2,51 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 
-import { Jackett } from './jackett';
+import { Jackett } from './services/jackett';
 import { Sonarr } from './services/sonarr';
 import { Radarr } from './services/radarr';
 import { Lidarr } from './services/lidarr';
+import { Readarr } from './services/readarr';
 import { Service } from './services/service';
 import { JackettIndexer } from './models/jackettIndexer';
-import { Readarr } from './services/readarr';
 
 async function start() {
-    const jackett = new Jackett(), sonarr = new Sonarr(), radarr = new Radarr(), lidarr = new Lidarr(), readarr = new Readarr();
-
     let jackettIndexers: JackettIndexer[];
     try {
-        jackett.validate();
+        const jackett = new Jackett();
         jackettIndexers = await jackett.getIndexers();
     } catch (error) {
-        console.error(`[${jackett.name}] Couldn't get indexers`, error.message);
+        console.error(`[${Jackett.name}] Couldn't get indexers`, error.message);
         process.exit(1);
     }
 
-    sync(sonarr, jackettIndexers);
-    sync(radarr, jackettIndexers);
-    sync(lidarr, jackettIndexers);
-    sync(readarr, jackettIndexers);
+    try {
+        const sonarr = new Sonarr();
+        sync(sonarr, jackettIndexers);
+    } catch (error) {
+        console.error(`[${Sonarr.name}] Failed`, error.message);
+    }
+
+    try {
+        const radarr = new Radarr();
+        sync(radarr, jackettIndexers);
+    } catch (error) {
+        console.error(`[${Radarr.name}] Failed`, error.message);
+    }
+
+    try {
+        const lidarr = new Lidarr();
+        sync(lidarr, jackettIndexers);
+    } catch (error) {
+        console.error(`[${Lidarr.name}] Failed`, error.message);
+    }
+
+    try {
+        const readarr = new Readarr();
+        sync(readarr, jackettIndexers);
+    } catch (error) {
+        console.error(`[${Readarr.name}] Failed`, error.message);
+    }
 }
 
 function sync(service: Service, jackettIndexers: JackettIndexer[]) {

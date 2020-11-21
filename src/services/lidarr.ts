@@ -3,11 +3,18 @@ import { Indexer } from '../models/indexer';
 import { Config } from '../config';
 import { LidarrEntry, LidarrFieldName } from '../interfaces/LidarrEntry';
 import { JackettIndexer } from '../models/jackettIndexer';
+import { ApiRoutes } from '../models/apiRoutes';
+import { getIdFromIndexerUrl } from '../helper';
 
 export class Lidarr extends Service {
+    apiRoutes: ApiRoutes;
+
     constructor() {
         const c = Config.lidarr;
-        super('Lidarr', '/api/v1', c.url, c.apiKey, c.categories, c.seeds);
+        super('Lidarr', c.categories, c.seeds);
+        this.checkUrlAndApiKey(c.url, c.apiKey);
+
+        this.apiRoutes = new ApiRoutes(c.url!, '/api/v1', c.apiKey!);
     }
 
     protected mapToIndexer(entry: LidarrEntry): Indexer {
@@ -22,10 +29,7 @@ export class Lidarr extends Service {
             entry.fields.find((field) => field.name == LidarrFieldName.apiKey)!.value,
         );
 
-        let match = indexer.url.match(this.indexerRegex);
-        if (match && match.groups) {
-            indexer.id = match.groups.id;
-        }
+        indexer.id = getIdFromIndexerUrl(indexer.url);
 
         return indexer;
     }

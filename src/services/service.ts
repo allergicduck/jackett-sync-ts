@@ -2,61 +2,49 @@ import { Indexer } from '../models/indexer';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { arrayEquals, Entry } from '../helper';
 import { JackettIndexer } from '../models/jackettIndexer';
-import { SonarrEntry } from '../interfaces/SonarrEntry';
-import { RadarrEntry } from '../interfaces/RadarrEntry';
-import { LidarrEntry } from '../interfaces/LidarrEntry';
-import { ReadarrEntry } from '../interfaces/ReadarrEntry';
+import { ApiRoutes } from '../models/apiRoutes';
 
 export abstract class Service {
-    protected indexerRegex = /.*\/api\/v2.0\/indexers\/(?<id>.*)\/results\/torznab\//;
-
+    abstract apiRoutes: ApiRoutes;
     name: string;
-    url?: string;
-    apiKey?: string;
     categories: number[];
     seeds: number;
     indexers: Indexer[] = [];
-    apiPath: string;
 
-    protected constructor(name: string, apiPath: string, url: string | undefined, key: string | undefined, categories: number[], seeds: number) {
+    protected constructor(name: string, categories: number[], seeds: number) {
         this.name = name;
-        this.url = url;
-        this.apiKey = key;
         this.categories = categories;
         this.seeds = seeds;
-        this.apiPath = apiPath;
     }
 
-    async validate(): Promise<AxiosResponse> {
-        if (this.url === null || this.url === undefined || this.url === '') {
+    protected checkUrlAndApiKey(url: string | undefined, apiKey: string | undefined) {
+        if (url === null || url === undefined || url === '') {
             throw new Error(`[${this.name}] No url provided`);
         }
 
-        if (this.apiKey === null || this.apiKey === undefined || this.apiKey === '') {
+        if (apiKey === null || apiKey === undefined || apiKey === '') {
             throw new Error(`[${this.name}] No apiKey provided`);
         }
-        const systemStatusUrl = `${this.url}${this.apiPath}/system/status?apikey=${this.apiKey}`;
-        return axios.get(systemStatusUrl);
+    }
+
+    async validate(): Promise<AxiosResponse> {
+        return axios.get(this.apiRoutes.getSystemUrl());
     }
 
     async getIndexers(): Promise<void> {
-        const reqUrl = `${this.url}${this.apiPath}/indexer?apikey=${this.apiKey}`;
-        this.indexers = await this.handleIndexersRequest(reqUrl);
+        this.indexers = await this.handleIndexersRequest(this.apiRoutes.getIndexerUrl());
     };
 
     protected add(indexer: JackettIndexer) {
-        const reqUrl = `${this.url}${this.apiPath}/indexer?apikey=${this.apiKey}`;
         const body = this.generateDefaultBody(indexer);
-
-        return axios.post(reqUrl, body);
+        return axios.post(this.apiRoutes.getIndexerUrl(), body);
     }
 
     protected update(appId: number | undefined, indexer: JackettIndexer): Promise<AxiosResponse> {
-        const reqUrl = `${this.url}${this.apiPath}/indexer/${appId}?apikey=${this.apiKey}`;
         const body = this.generateDefaultBody(indexer);
         body.id = appId;
 
-        return axios.put(reqUrl, body);
+        return axios.put(this.apiRoutes.getSpecificIndexerUrl(appId), body);
     }
 
     protected abstract mapToIndexer(entry: Entry): Indexer;
@@ -153,13 +141,13 @@ export abstract class Service {
     }
 
     protected indexerSpecificConfiguration(indexer: JackettIndexer, supportedCategories: number[], undo: boolean = false) {
-        if(!undo) {
-            if(indexer.id === "limetorrents") {
+        if (!undo) {
+            if (indexer.id === 'limetorrents') {
                 console.log(`[${this.name}] Detected index specific setting, adding category 8000`);
                 supportedCategories.push(8000);
             }
         } else {
-            if(indexer.id === "limetorrents") {
+            if (indexer.id === 'limetorrents') {
                 supportedCategories.splice(supportedCategories.indexOf(8000), 1);
             }
         }

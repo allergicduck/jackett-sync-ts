@@ -2,16 +2,21 @@ import { Service } from './service';
 import { Indexer } from '../models/indexer';
 import { SonarrFieldName, SonarrEntry } from '../interfaces/SonarrEntry';
 import { Config } from '../config';
-import { arrayEquals } from '../helper';
+import { arrayEquals, getIdFromIndexerUrl } from '../helper';
 import { JackettIndexer } from '../models/jackettIndexer';
+import { ApiRoutes } from '../models/apiRoutes';
 
 export class Sonarr extends Service {
+    apiRoutes: ApiRoutes;
     animeCategories: number[];
 
     constructor() {
         const c = Config.sonarr;
-        super('Sonarr', '/api/v3/', c.url, c.apiKey, c.categories, c.seeds);
+        super('Sonarr', c.categories, c.seeds);
+        this.checkUrlAndApiKey(c.url, c.apiKey);
+
         this.animeCategories = c.animeCategories;
+        this.apiRoutes = new ApiRoutes(c.url!, '/api/v3', c.apiKey!);
     }
 
     protected mapToIndexer(entry: SonarrEntry): Indexer {
@@ -27,10 +32,7 @@ export class Sonarr extends Service {
             entry.fields.find((field) => field.name == SonarrFieldName.animeCategories)!.value,
         );
 
-        let match = indexer.url.match(this.indexerRegex);
-        if (match && match.groups) {
-            indexer.id = match.groups.id;
-        }
+        indexer.id = getIdFromIndexerUrl(indexer.url);
 
         return indexer;
     }

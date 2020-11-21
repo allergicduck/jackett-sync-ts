@@ -2,16 +2,21 @@ import { Service } from './service';
 import { Indexer } from '../models/indexer';
 import { RadarrEntry, RadarrFieldName } from '../interfaces/RadarrEntry';
 import { Config } from '../config';
-import { arrayEquals } from '../helper';
+import { arrayEquals, getIdFromIndexerUrl } from '../helper';
 import { JackettIndexer } from '../models/jackettIndexer';
+import { ApiRoutes } from '../models/apiRoutes';
 
 export class Radarr extends Service {
+    apiRoutes: ApiRoutes;
     animeCategories: number[];
 
     constructor() {
         const c = Config.radarr;
-        super('Radarr', '/api', c.url, c.apiKey, c.categories, c.seeds);
+        super('Radarr', c.categories, c.seeds);
+        this.checkUrlAndApiKey(c.url, c.apiKey);
+
         this.animeCategories = c.animeCategories;
+        this.apiRoutes = new ApiRoutes(c.url!, '/api', c.apiKey!);
     }
 
     protected mapToIndexer(entry: RadarrEntry) {
@@ -27,10 +32,7 @@ export class Radarr extends Service {
             entry.fields.find((field) => field.name == RadarrFieldName.AnimeCategories)!.value,
         );
 
-        let match = indexer.url.match(this.indexerRegex);
-        if (match && match.groups) {
-            indexer.id = match.groups.id;
-        }
+        indexer.id = getIdFromIndexerUrl(indexer.url);
 
         return indexer;
     }
