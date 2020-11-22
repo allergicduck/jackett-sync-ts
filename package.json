@@ -1,13 +1,13 @@
 {
   "name": "jackett-sync",
-  "description": "A quick & dirty extensible Jackett-to-Sonarr/Radarr/Lidarr/Whatever indexer synchronizer written in Node.js",
-  "version": "1.0.6",
+  "description": "Jackett indexers synchronizer to Sonarr, Radarr, Lidarr and Readarr",
+  "version": "1.0.0",
   "main": "src/main.ts",
-  "author": "Łukasz Mariański <lmarianski@protonmail.com>",
+  "author": "AllergicDuck <allergicduck@protonmail.com>",
   "license": "GPL-3.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lmarianski/jackett-sync"
+    "url": "https://github.com/allergicduck/jackett-sync"
   },
   "scripts": {
     "start": "ts-node --pretty src/main.ts",
