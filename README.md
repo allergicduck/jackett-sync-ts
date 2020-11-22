@@ -11,6 +11,13 @@ An image is available at [allergicduck/jackett-sync](https://hub.docker.com/r/al
 - `npm start`
 - Jackett is required, all others are optional.
 
+## Versions
+Confirmed working versions:
+- Sonarr: 3.0.4.1019
+- Radarr: 3.0.0.3790
+- Lidarr: 0.8.0.1896
+- Readerr: 0.1.0.310
+
 ## Config
 
 ```dotenv

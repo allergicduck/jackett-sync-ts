@@ -17,7 +17,6 @@ export class Config {
         url: process.env.RADARR_URL,
         apiKey: process.env.RADARR_KEY,
         categories: [2000, 2010, 2020, 2030, 2035, 2040, 2045, 2050, 2060],
-        animeCategories: [],
         seeds: 1,
     };
 

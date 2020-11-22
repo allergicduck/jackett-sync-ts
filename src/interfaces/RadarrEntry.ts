@@ -22,14 +22,15 @@ export interface RadarrField {
 }
 
 export enum RadarrFieldName {
-    BaseUrl = "BaseUrl",
-    MultiLanguages = "MultiLanguages",
-    ApiKey = "ApiKey",
-    Categories = "Categories",
-    AnimeCategories = "AnimeCategories",
-    AdditionalParameters = "AdditionalParameters",
-    RemoveYear = "RemoveYear",
-    SearchByTitle = "SearchByTitle",
-    MinimumSeeders = "MinimumSeeders",
-    RequiredFlags = "RequiredFlags",
+    baseUrl = "baseUrl",
+    apiPath = "apiPath",
+    multiLanguages = "multiLanguages",
+    apiKey = "apiKey",
+    categories = "categories",
+    additionalParameters = "additionalParameters",
+    removeYear = "removeYear",
+    minimumSeeders = "minimumSeeders",
+    seedRatio = "seedCriteria.seedRatio",
+    seedTime = "seedCriteria.seedTime",
+    requiredFlags = "requiredFlags",
 }
