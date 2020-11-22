@@ -40,7 +40,7 @@ export class Lidarr extends Service {
         this.indexerSpecificConfiguration(indexer, supportedCategories);
 
         return {
-            priority: 0,
+            priority: 25,
             enableRss: true,
             enableAutomaticSearch: true,
             enableInteractiveSearch: true,
