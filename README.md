@@ -1,14 +1,11 @@
 Sync all [Jackett](https://github.com/Jackett/Jackett) indexers to [Sonarr](https://github.com/Sonarr/Sonarr), [Radarr](https://github.com/Radarr/Radarr), [Lidarr](https://github.com/lidarr/Lidarr) and [Readarr](https://github.com/Readarr/Readarr).
 
 ## Install
-### NPM
-```
- && npm start
-```
 ### Docker
 An image is available at [allergicduck/jackett-sync](https://hub.docker.com/r/allergicduck/jackett-sync)
 
 ## Usage
+- Clone repo / use Docker
 - `npm install`
 - `cp .env-example .env`
 - `npm start`

@@ -1,0 +1,98 @@
+<?xml version="1.0"?>
+<Container version="2">
+    <Name>jackett-sync</Name>
+    <Repository>allergicduck/jackett-sync:latest</Repository>
+    <Registry/>
+    <Network>host</Network>
+    <MyIP/>
+    <Shell>sh</Shell>
+    <Privileged>false</Privileged>
+    <Support/>
+    <Project>https://github.com/AllergicDuck/jackett-sync-ts</Project>
+    <Overview/>
+    <Category/>
+    <WebUI/>
+    <TemplateURL/>
+    <Icon/>
+    <ExtraParams/>
+    <PostArgs/>
+    <CPUset/>
+    <DateInstalled>1606072265</DateInstalled>
+    <DonateText/>
+    <DonateLink/>
+    <Description/>
+    <Networking>
+        <Mode>host</Mode>
+        <Publish/>
+    </Networking>
+    <Data/>
+    <Environment>
+        <Variable>
+            <Value></Value>
+            <Name>JACKETT_URL</Name>
+            <Mode/>
+        </Variable>
+        <Variable>
+            <Value></Value>
+            <Name>JACKETT_KEY</Name>
+            <Mode/>
+        </Variable>
+        <Variable>
+            <Value></Value>
+            <Name>JACKETT_ALTURL</Name>
+            <Mode/>
+        </Variable>
+        <Variable>
+            <Value></Value>
+            <Name>SONARR_URL</Name>
+            <Mode/>
+        </Variable>
+        <Variable>
+            <Value></Value>
+            <Name>SONARR_KEY</Name>
+            <Mode/>
+        </Variable>
+        <Variable>
+            <Value></Value>
+            <Name>RADARR_URL</Name>
+            <Mode/>
+        </Variable>
+        <Variable>
+            <Value></Value>
+            <Name>RADARR_KEY</Name>
+            <Mode/>
+        </Variable>
+        <Variable>
+            <Value></Value>
+            <Name>LIDARR_URL</Name>
+            <Mode/>
+        </Variable>
+        <Variable>
+            <Value></Value>
+            <Name>LIDARR_KEY</Name>
+            <Mode/>
+        </Variable>
+        <Variable>
+            <Value></Value>
+            <Name>READARR_URL</Name>
+            <Mode/>
+        </Variable>
+        <Variable>
+            <Value></Value>
+            <Name>READARR_KEY</Name>
+            <Mode/>
+        </Variable>
+    </Environment>
+    <Labels/>
+    <Config Name="JACKETT_URL" Target="JACKETT_URL" Default="http://jackett:9117" Mode="" Description="Container Variable: JACKETT_URL" Type="Variable" Display="always" Required="true" Mask="false"></Config>
+    <Config Name="JACKETT_KEY" Target="JACKETT_KEY" Default="" Mode="" Description="Container Variable: JACKETT_KEY" Type="Variable" Display="always" Required="true" Mask="false"></Config>
+    <Config Name="JACKETT_ALTURL" Target="JACKETT_ALTURL" Default="" Mode="" Description="Container Variable: JACKETT_ALTURL" Type="Variable" Display="always" Required="false" Mask="false"></Config>
+    <Config Name="SONARR_URL" Target="SONARR_URL" Default="http://sonarr:8989" Mode="" Description="Container Variable: SONARR_URL" Type="Variable" Display="always" Required="false" Mask="false"></Config>
+    <Config Name="SONARR_KEY" Target="SONARR_KEY" Default="" Mode="" Description="Container Variable: SONARR_KEY" Type="Variable" Display="always" Required="false" Mask="false"></Config>
+    <Config Name="RADARR_URL" Target="RADARR_URL" Default="http://radarr:7878" Mode="" Description="Container Variable: RADARR_URL" Type="Variable" Display="always" Required="false" Mask="false"></Config>
+    <Config Name="RADARR_KEY" Target="RADARR_KEY" Default="" Mode="" Description="Container Variable: RADARR_KEY" Type="Variable" Display="always" Required="false" Mask="false"></Config>
+    <Config Name="LIDARR_URL" Target="LIDARR_URL" Default="http://lidarr:8686" Mode="" Description="Container Variable: LIDARR_URL" Type="Variable" Display="always" Required="false" Mask="false"></Config>
+    <Config Name="LIDARR_KEY" Target="LIDARR_KEY" Default="" Mode="" Description="Container Variable: LIDARR_KEY" Type="Variable" Display="always" Required="false" Mask="false"></Config>
+    <Config Name="READARR_URL" Target="READARR_URL" Default="http://readarr:8787" Mode="" Description="Container Variable: READARR_URL" Type="Variable" Display="always" Required="false" Mask="false"></Config>
+    <Config Name="READARR_KEY" Target="READARR_KEY" Default="" Mode="" Description="Container Variable: READARR_KEY" Type="Variable" Display="always" Required="false" Mask="false"></Config>
+</Container>
