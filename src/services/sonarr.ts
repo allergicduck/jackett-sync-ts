@@ -1,10 +1,11 @@
 import { Service } from './service';
 import { Indexer } from '../models/indexer';
-import { SonarrFieldName, SonarrEntry } from '../interfaces/SonarrEntry';
+import { SonarrEntry, SonarrFieldName } from '../interfaces/SonarrEntry';
 import { Config } from '../config';
 import { arrayEquals, getIdFromIndexerUrl } from '../helper';
 import { JackettIndexer } from '../models/jackettIndexer';
 import { ApiRoutes } from '../models/apiRoutes';
+import { Services } from '../models/indexSpecificRule';
 
 export class Sonarr extends Service {
     apiRoutes: ApiRoutes;
@@ -12,7 +13,7 @@ export class Sonarr extends Service {
 
     constructor() {
         const c = Config.sonarr;
-        super('Sonarr', c.categories, c.seeds);
+        super(Services.SONARR, c.categories, c.seeds);
         this.checkUrlAndApiKey(c.url, c.apiKey);
 
         this.animeCategories = c.animeCategories;
@@ -41,7 +42,7 @@ export class Sonarr extends Service {
         const supportedCategories = this.categories.filter(id => indexer.categories.includes(id));
         const supportedAnimeCategories = this.animeCategories.filter(id => indexer.categories.includes(id));
 
-        this.indexerSpecificConfiguration(indexer, supportedCategories);
+        this.indexerSpecificConfiguration(indexer, supportedCategories, supportedAnimeCategories);
 
         return {
             priority: 25,
@@ -81,7 +82,7 @@ export class Sonarr extends Service {
         const availableCategories = this.categories.filter(id => indexer.categories.includes(id));
         const availableAnimeCategories = this.animeCategories.filter(id => indexer.categories.includes(id));
 
-        this.indexerSpecificConfiguration(indexer, current.categories, true);
+        this.undoIndexerSpecificConfiguration(indexer, current.categories, current.animeCategories);
 
         return arrayEquals(current.categories, availableCategories) && arrayEquals(current.animeCategories, availableAnimeCategories);
     }

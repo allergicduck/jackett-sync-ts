@@ -5,13 +5,14 @@ import { LidarrEntry, LidarrFieldName } from '../interfaces/LidarrEntry';
 import { JackettIndexer } from '../models/jackettIndexer';
 import { ApiRoutes } from '../models/apiRoutes';
 import { getIdFromIndexerUrl } from '../helper';
+import { Services } from '../models/indexSpecificRule';
 
 export class Lidarr extends Service {
     apiRoutes: ApiRoutes;
 
     constructor() {
         const c = Config.lidarr;
-        super('Lidarr', c.categories, c.seeds);
+        super(Services.LIDARR, c.categories, c.seeds);
         this.checkUrlAndApiKey(c.url, c.apiKey);
 
         this.apiRoutes = new ApiRoutes(c.url!, '/api/v1', c.apiKey!);
@@ -27,6 +28,7 @@ export class Lidarr extends Service {
             entry.fields.find((field) => field.name == LidarrFieldName.minimumSeeders)!.value,
             entry.fields.find((field) => field.name == LidarrFieldName.baseUrl)!.value,
             entry.fields.find((field) => field.name == LidarrFieldName.apiKey)!.value,
+            []
         );
 
         indexer.id = getIdFromIndexerUrl(indexer.url);
@@ -37,7 +39,7 @@ export class Lidarr extends Service {
     protected generateDefaultBody(indexer: JackettIndexer): LidarrEntry {
         const supportedCategories = this.categories.filter(id => indexer.categories.includes(id));
 
-        this.indexerSpecificConfiguration(indexer, supportedCategories);
+        this.indexerSpecificConfiguration(indexer, supportedCategories, []);
 
         return {
             priority: 25,

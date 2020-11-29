@@ -5,13 +5,14 @@ import { Config } from '../config';
 import { getIdFromIndexerUrl } from '../helper';
 import { JackettIndexer } from '../models/jackettIndexer';
 import { ApiRoutes } from '../models/apiRoutes';
+import { Services } from '../models/indexSpecificRule';
 
 export class Radarr extends Service {
     apiRoutes: ApiRoutes;
 
     constructor() {
         const c = Config.radarr;
-        super('Radarr', c.categories, c.seeds);
+        super(Services.RADARR, c.categories, c.seeds);
         this.checkUrlAndApiKey(c.url, c.apiKey);
 
         this.apiRoutes = new ApiRoutes(c.url!, '/api', c.apiKey!);
@@ -27,6 +28,7 @@ export class Radarr extends Service {
             entry.fields.find((field) => field.name == RadarrFieldName.minimumSeeders)!.value,
             entry.fields.find((field) => field.name == RadarrFieldName.baseUrl)!.value,
             entry.fields.find((field) => field.name == RadarrFieldName.apiKey)!.value,
+            [],
         );
 
         indexer.id = getIdFromIndexerUrl(indexer.url);
@@ -37,7 +39,7 @@ export class Radarr extends Service {
     protected generateDefaultBody(indexer: JackettIndexer): RadarrEntry {
         const supportedCategories = this.categories.filter(id => indexer.categories.includes(id));
 
-        this.indexerSpecificConfiguration(indexer, supportedCategories);
+        this.indexerSpecificConfiguration(indexer, supportedCategories, []);
 
         return {
             enableRss: true,

@@ -5,13 +5,14 @@ import { JackettIndexer } from '../models/jackettIndexer';
 import { ReadarrEntry, ReadarrFieldName } from '../interfaces/ReadarrEntry';
 import { ApiRoutes } from '../models/apiRoutes';
 import { getIdFromIndexerUrl } from '../helper';
+import { Services } from '../models/indexSpecificRule';
 
 export class Readarr extends Service {
     apiRoutes: ApiRoutes;
 
     constructor() {
         const c = Config.readarr;
-        super('Readarr', c.categories, c.seeds);
+        super(Services.READARR, c.categories, c.seeds);
         this.checkUrlAndApiKey(c.url, c.apiKey);
 
         this.apiRoutes = new ApiRoutes(c.url!, '/api/v1', c.apiKey!);
@@ -27,6 +28,7 @@ export class Readarr extends Service {
             entry.fields.find((field) => field.name == ReadarrFieldName.minimumSeeders)!.value,
             entry.fields.find((field) => field.name == ReadarrFieldName.baseUrl)!.value,
             entry.fields.find((field) => field.name == ReadarrFieldName.apiKey)!.value,
+            []
         );
 
         indexer.id = getIdFromIndexerUrl(indexer.url);
@@ -37,7 +39,7 @@ export class Readarr extends Service {
     protected generateDefaultBody(indexer: JackettIndexer): ReadarrEntry {
         const supportedCategories = this.categories.filter(id => indexer.categories.includes(id));
 
-        this.indexerSpecificConfiguration(indexer, supportedCategories);
+        this.indexerSpecificConfiguration(indexer, supportedCategories, []);
 
         return {
             priority: 25,

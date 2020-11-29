@@ -3,16 +3,18 @@ import axios, { AxiosError, AxiosResponse } from 'axios';
 import { arrayEquals, Entry } from '../helper';
 import { JackettIndexer } from '../models/jackettIndexer';
 import { ApiRoutes } from '../models/apiRoutes';
+import { Services } from '../models/indexSpecificRule';
+import { Config } from '../config';
 
 export abstract class Service {
     abstract apiRoutes: ApiRoutes;
-    name: string;
+    service: Services;
     categories: number[];
     seeds: number;
     indexers: Indexer[] = [];
 
-    protected constructor(name: string, categories: number[], seeds: number) {
-        this.name = name;
+    protected constructor(name: Services, categories: number[], seeds: number) {
+        this.service = name;
         this.categories = categories;
         this.seeds = seeds;
     }
@@ -72,9 +74,9 @@ export abstract class Service {
             .catch((error) => {
                 if (error && error.response) {
                     const axiosError = error as AxiosError;
-                    console.error(`[${this.name}][${axiosError.response?.status}] Couldn't get indexes, error: ${JSON.stringify(axiosError.response?.data)}, url: ${axiosError.config.url}`);
+                    console.error(`[${this.service}][${axiosError.response?.status}] Couldn't get indexes, error: ${JSON.stringify(axiosError.response?.data)}, url: ${axiosError.config.url}`);
                 } else {
-                    console.error(`[${this.name}] Unexpected error during request`, error);
+                    console.error(`[${this.service}] Unexpected error during request`, error);
                 }
                 throw error;
             });
@@ -83,19 +85,19 @@ export abstract class Service {
     private handleRequest(axiosResponsePromise: Promise<AxiosResponse>) {
         return axiosResponsePromise.then((response) => {
             if (response.status == 201) {
-                console.log(`[${this.name}] Added ${response.data.name} successfully!`);
+                console.log(`[${this.service}] Added ${response.data.name} successfully!`);
             } else if (response.status == 202) {
-                console.log(`[${this.name}] Updated ${response.data.name} successfully!`);
+                console.log(`[${this.service}] Updated ${response.data.name} successfully!`);
             } else {
-                console.log(`[${this.name}] Request successful, but unknown responseStatus`, response.data.name);
+                console.log(`[${this.service}] Request successful, but unknown responseStatus`, response.data.name);
             }
         }).catch((error) => {
             if (error && error.response) {
                 const axiosError = error as AxiosError;
                 const data = JSON.parse(error.response.config.data);
-                console.error(`[${this.name}][${axiosError.response?.status}] Something went wrong with ${data.name}, error: ${axiosError.response?.data[0]?.errorMessage}`);
+                console.error(`[${this.service}][${axiosError.response?.status}] Something went wrong with ${data.name}, error: ${axiosError.response?.data[0]?.errorMessage}`);
             } else {
-                console.error(`[${this.name}] Unexpected error during request`, error);
+                console.error(`[${this.service}] Unexpected error during request`, error);
             }
         });
     }
@@ -135,21 +137,52 @@ export abstract class Service {
     protected containsAllWantedCategories(current: Indexer, indexer: JackettIndexer): boolean {
         const availableCategories = this.categories.filter(id => indexer.categories.includes(id));
 
-        this.indexerSpecificConfiguration(indexer, current.categories, true);
+        this.undoIndexerSpecificConfiguration(indexer, current.categories, []);
 
         return arrayEquals(current.categories, availableCategories);
     }
 
-    protected indexerSpecificConfiguration(indexer: JackettIndexer, supportedCategories: number[], undo: boolean = false) {
-        if (!undo) {
-            if (indexer.id === 'limetorrents') {
-                console.log(`[${this.name}] Detected index specific setting, adding category 8000`);
-                supportedCategories.push(8000);
+    protected indexerSpecificConfiguration(
+        indexer: JackettIndexer,
+        supportedCategories: number[],
+        animeSupportedCategories: number[],
+    ) {
+        Config.indexSpecificRules.forEach((indexSpecificRule) => {
+            if (indexSpecificRule.service === Services.ALL || indexSpecificRule.service === this.service) {
+                if (indexer.id === indexSpecificRule.indexerId) {
+                    if (indexSpecificRule.category != null && !supportedCategories.includes(indexSpecificRule.category)) {
+                        // console.log(`[${this.service}] Detected index specific setting, adding category ${indexSpecificRule.category}`);
+                        supportedCategories.push(indexSpecificRule.category);
+                    }
+                    if (indexSpecificRule.animeCategory != null && !animeSupportedCategories.includes(indexSpecificRule.animeCategory)) {
+                        // console.log(`[${this.service}] Detected index specific setting, adding animeCategory ${indexSpecificRule.animeCategory}`);
+                        animeSupportedCategories.push(indexSpecificRule.animeCategory);
+                    }
+                }
+
             }
-        } else {
-            if (indexer.id === 'limetorrents') {
-                supportedCategories.splice(supportedCategories.indexOf(8000), 1);
+        });
+    }
+
+    protected undoIndexerSpecificConfiguration(
+        indexer: JackettIndexer,
+        supportedCategories: number[],
+        animeSupportedCategories: number[],
+    ) {
+        Config.indexSpecificRules.forEach((indexSpecificRule) => {
+            if (indexSpecificRule.service === Services.ALL || indexSpecificRule.service === this.service) {
+                if (indexer.id === indexSpecificRule.indexerId) {
+                    if (indexSpecificRule.category != null && supportedCategories.includes(indexSpecificRule.category)) {
+                        // console.log(`[${this.service}] Detected index specific setting, removing category ${indexSpecificRule.category}`);
+                        supportedCategories.splice(supportedCategories.indexOf(indexSpecificRule.category), 1);
+                    }
+                    if (indexSpecificRule.animeCategory != null && animeSupportedCategories.includes(indexSpecificRule.animeCategory)) {
+                        // console.log(`[${this.service}] Detected index specific setting, removing animeCategory ${indexSpecificRule.animeCategory}`);
+                        animeSupportedCategories.splice(supportedCategories.indexOf(indexSpecificRule.animeCategory), 1);
+                    }
+                }
+
             }
-        }
+        });
     }
 }

@@ -1,3 +1,5 @@
+import { IndexSpecificRule, Services } from './models/indexSpecificRule';
+
 export class Config {
     public static jackett = {
         url: process.env.JACKETT_URL,
@@ -9,7 +11,7 @@ export class Config {
         url: process.env.SONARR_URL,
         apiKey: process.env.SONARR_KEY,
         categories: [5000, 5030, 5040],
-        animeCategories: [5070, 100001, 116972, 127720, 135594, 146065, 152237],
+        animeCategories: [5070],
         seeds: 1,
     };
 
@@ -33,4 +35,14 @@ export class Config {
         categories: [7020, 8010],
         seeds: 1,
     };
+
+    public static indexSpecificRules = [
+        new IndexSpecificRule(Services.ALL, 'limetorrents', 8000, undefined),
+        new IndexSpecificRule(Services.ALL, 'limetorrents', undefined, 146065),
+        new IndexSpecificRule(Services.SONARR, 'tokyotosho', undefined, 100001),
+        new IndexSpecificRule(Services.SONARR, 'nyaa-pantsu', undefined, 116972),
+        new IndexSpecificRule(Services.SONARR, 'nyaa-pantsu', undefined, 135594),
+        new IndexSpecificRule(Services.SONARR, 'nyaa-pantsu', undefined, 152237),
+        new IndexSpecificRule(Services.SONARR, 'nyaasi', undefined, 127720),
+    ];
 }

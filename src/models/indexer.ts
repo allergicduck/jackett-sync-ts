@@ -6,7 +6,7 @@ export class Indexer {
     title: string;
     protocol: string;
     categories: number[];
-    animeCategories?: number[];
+    animeCategories: number[];
     seeds: number;
     url: string;
     key: string;
@@ -20,7 +20,7 @@ export class Indexer {
         seeds: number,
         url: string,
         key: string,
-        animeCategories?: number[],
+        animeCategories: number[],
     ) {
         this.id = id;
         this.appId = appId;
