@@ -159,7 +159,6 @@ export abstract class Service {
                         animeSupportedCategories.push(indexSpecificRule.animeCategory);
                     }
                 }
-
             }
         });
     }
@@ -178,10 +177,9 @@ export abstract class Service {
                     }
                     if (indexSpecificRule.animeCategory != null && animeSupportedCategories.includes(indexSpecificRule.animeCategory)) {
                         // console.log(`[${this.service}] Detected index specific setting, removing animeCategory ${indexSpecificRule.animeCategory}`);
-                        animeSupportedCategories.splice(supportedCategories.indexOf(indexSpecificRule.animeCategory), 1);
+                        animeSupportedCategories.splice(animeSupportedCategories.indexOf(indexSpecificRule.animeCategory), 1);
                     }
                 }
-
             }
         });
     }
