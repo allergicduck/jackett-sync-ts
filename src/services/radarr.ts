@@ -27,7 +27,7 @@ export class Radarr extends Service {
             entry.fields.find((field) => field.name == RadarrFieldName.categories)!.value,
             entry.fields.find((field) => field.name == RadarrFieldName.minimumSeeders)!.value,
             entry.fields.find((field) => field.name == RadarrFieldName.baseUrl)!.value,
-            entry.fields.find((field) => field.name == RadarrFieldName.apiKey)!.value,
+            entry.fields.find((field) => field.name == RadarrFieldName.apiKey)?.value,
             [],
         );
 

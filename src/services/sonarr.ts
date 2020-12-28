@@ -29,7 +29,7 @@ export class Sonarr extends Service {
             entry.fields.find((field) => field.name == SonarrFieldName.categories)!.value,
             entry.fields.find((field) => field.name == SonarrFieldName.minimumSeeders)!.value,
             entry.fields.find((field) => field.name == SonarrFieldName.baseUrl)!.value,
-            entry.fields.find((field) => field.name == SonarrFieldName.apiKey)!.value,
+            entry.fields.find((field) => field.name == SonarrFieldName.apiKey)?.value,
             entry.fields.find((field) => field.name == SonarrFieldName.animeCategories)!.value,
         );
 

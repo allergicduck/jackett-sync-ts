@@ -27,7 +27,7 @@ export class Lidarr extends Service {
             entry.fields.find((field) => field.name == LidarrFieldName.categories)!.value,
             entry.fields.find((field) => field.name == LidarrFieldName.minimumSeeders)!.value,
             entry.fields.find((field) => field.name == LidarrFieldName.baseUrl)!.value,
-            entry.fields.find((field) => field.name == LidarrFieldName.apiKey)!.value,
+            entry.fields.find((field) => field.name == LidarrFieldName.apiKey)?.value,
             []
         );
 

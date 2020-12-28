@@ -27,7 +27,7 @@ export class Readarr extends Service {
             entry.fields.find((field) => field.name == ReadarrFieldName.categories)!.value,
             entry.fields.find((field) => field.name == ReadarrFieldName.minimumSeeders)!.value,
             entry.fields.find((field) => field.name == ReadarrFieldName.baseUrl)!.value,
-            entry.fields.find((field) => field.name == ReadarrFieldName.apiKey)!.value,
+            entry.fields.find((field) => field.name == ReadarrFieldName.apiKey)?.value,
             []
         );
 

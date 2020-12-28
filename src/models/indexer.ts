@@ -9,7 +9,7 @@ export class Indexer {
     animeCategories: number[];
     seeds: number;
     url: string;
-    key: string;
+    key: string | undefined;
 
     constructor(
         id: string | undefined,
@@ -19,7 +19,7 @@ export class Indexer {
         categories: number[],
         seeds: number,
         url: string,
-        key: string,
+        key: string | undefined,
         animeCategories: number[],
     ) {
         this.id = id;
