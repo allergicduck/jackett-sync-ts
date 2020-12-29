@@ -70,7 +70,12 @@ export abstract class Service {
 
     protected handleIndexersRequest(url: string): Promise<Indexer[]> {
         return axios.get(url)
-            .then((response) => response.data.map((entry: Entry) => this.mapToIndexer(entry)))
+            .then((response) => {
+                return response.data.map((entry: Entry) => this.mapToIndexerWithCatch(entry));
+            })
+            .then((indexers) => {
+                return indexers.filter((indexer: Indexer | undefined) => indexer && indexer.id !== undefined);
+            })
             .catch((error) => {
                 if (error && error.response) {
                     const axiosError = error as AxiosError;
@@ -81,6 +86,15 @@ export abstract class Service {
                 throw error;
             });
     }
+
+    private mapToIndexerWithCatch(entry: Entry): Indexer | undefined {
+        try {
+            return this.mapToIndexer(entry);
+        } catch (error) {
+            console.warn(`[${this.service}] Indexer ${entry.name} could not be parsed, skipping for check`);
+        }
+    }
+
 
     private handleRequest(axiosResponsePromise: Promise<AxiosResponse>) {
         return axiosResponsePromise.then((response) => {
