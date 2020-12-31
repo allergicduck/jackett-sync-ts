@@ -42,6 +42,7 @@ export class Radarr extends Service {
         this.indexerSpecificConfiguration(indexer, supportedCategories, []);
 
         return {
+            priority: 25,
             enableRss: true,
             enableSearch: true,
             supportsRss: true,
