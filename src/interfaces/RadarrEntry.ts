@@ -4,6 +4,7 @@ export interface RadarrEntry {
     supportsRss: boolean,
     supportsSearch: boolean,
     protocol: string,
+    priority: number,
     implementationName: 'Torznab',
     implementation: 'Torznab',
     configContract: 'TorznabSettings',
