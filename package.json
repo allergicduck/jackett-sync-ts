@@ -18,7 +18,6 @@
     "axios": "^0.21.1",
     "dotenv": "^8.2.0",
     "fast-xml-parser": "^3.17.4",
-    "jackett-sync": "^1.0.7",
     "typescript": "^4.0.5"
   },
   "devDependencies": {
