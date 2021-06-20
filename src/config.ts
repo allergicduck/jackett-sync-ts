@@ -37,8 +37,9 @@ export class Config {
     };
 
     public static indexSpecificRules = [
-        new IndexSpecificRule(Services.ALL, 'limetorrents', 8000, undefined),
-        new IndexSpecificRule(Services.ALL, 'limetorrents', undefined, 146065),
+        new IndexSpecificRule(Services.ALL, 'limetorrents', 8000, 146065),
+        new IndexSpecificRule(Services.ALL, '7torrents', 8000, undefined),
+        new IndexSpecificRule(Services.ALL, 'btdb', 8000, undefined),
         new IndexSpecificRule(Services.SONARR, 'tokyotosho', undefined, 100001),
         new IndexSpecificRule(Services.SONARR, 'nyaa-pantsu', undefined, 116972),
         new IndexSpecificRule(Services.SONARR, 'nyaa-pantsu', undefined, 135594),

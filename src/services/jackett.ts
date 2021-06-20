@@ -53,7 +53,6 @@ export class Jackett {
 
     private mapToIndexer(entry: JackettEntry): JackettIndexer {
         let categories = Jackett.parseCategories(entry.caps.categories.category);
-
         return new JackettIndexer(
             entry.id,
             entry.title,

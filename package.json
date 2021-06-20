@@ -1,7 +1,7 @@
 {
   "name": "jackett-sync-ts",
   "description": "Jackett indexers synchronizer to Sonarr, Radarr, Lidarr and Readarr",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "main": "src/main.ts",
   "author": "AllergicDuck <allergicduck@protonmail.com>",
   "license": "GPL-3.0",

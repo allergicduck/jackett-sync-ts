@@ -21,6 +21,10 @@ function getIdFromIndexerUrl(url: string): string | undefined {
     return id;
 }
 
+function notEmpty<T>(value: T | null | undefined): value is T {
+    return value !== null && value !== undefined;
+}
+
 type Entry = SonarrEntry | RadarrEntry | LidarrEntry | ReadarrEntry;
 
-export { arrayEquals, Entry, getIdFromIndexerUrl };
+export { arrayEquals, Entry, getIdFromIndexerUrl, notEmpty };

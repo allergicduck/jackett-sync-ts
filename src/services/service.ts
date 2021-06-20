@@ -1,6 +1,6 @@
 import { Indexer } from '../models/indexer';
 import axios, { AxiosError, AxiosResponse } from 'axios';
-import { arrayEquals, Entry } from '../helper';
+import { arrayEquals, Entry, notEmpty } from '../helper';
 import { JackettIndexer } from '../models/jackettIndexer';
 import { ApiRoutes } from '../models/apiRoutes';
 import { Services } from '../models/indexSpecificRule';
@@ -55,7 +55,6 @@ export abstract class Service {
 
     async sync(jackettIndexers: JackettIndexer[]) {
         const { add, update } = this.checkDifferences(jackettIndexers);
-
         const addPromises = add.map(async (indexer) => {
             return this.handleRequest(this.add(indexer));
         });
@@ -118,15 +117,17 @@ export abstract class Service {
 
     private checkDifferences(jackettIndexers: JackettIndexer[]): { add: JackettIndexer[], update: JackettIndexer[] } {
         const idList = jackettIndexers.map(el => el.id);
-        const serviceIdList = this.indexers.map((indexer) => indexer.id);
+        const serviceIdList = this.indexers.map((indexer) => indexer.id).filter(notEmpty);
 
         const diff = idList.filter((id) => !serviceIdList.includes(id));
         const shouldBeAddedIndexers = diff.map((indexersId) => {
             const indexer = jackettIndexers.find((indexer) => indexer.id == indexersId)!;
             if (this.shouldAdd(indexer)) {
                 return indexer;
+            } {
+                console.debug(`[${this.service}] Skipping add for ${indexer.id}, since there were no matching categories.`)
             }
-        }).filter(exists => exists) as JackettIndexer[];
+        }).filter(notEmpty);
 
         const same = idList.filter((id) => serviceIdList.includes(id));
         const shouldBeUpdatedIndexers = same.map((indexersId) => {
@@ -134,14 +135,21 @@ export abstract class Service {
             const existingIndexer = this.indexers.find((indexer) => indexer.id == indexersId)!;
             if (this.shouldUpdate(existingIndexer, jacketIndexer)) {
                 return jacketIndexer;
+            } else {
+                console.debug(`[${this.service}] Skipping update for ${existingIndexer.id}, since no updates were detected`)
             }
-        }).filter(exists => exists) as JackettIndexer[];
+        }).filter(notEmpty);
+
+        const notInJackett = serviceIdList.filter((id) => !idList.includes(id));
+        notInJackett.forEach((indexer) => {
+            console.warn(`[${this.service}] Found indexer ${indexer} which is not in Jackett, please remove manually`)
+        })
 
         return { add: shouldBeAddedIndexers, update: shouldBeUpdatedIndexers };
     }
 
     protected shouldAdd(indexer: JackettIndexer) {
-        return indexer.categories.some(category => this.categories.includes(category));
+        return indexer.categories.some(category => this.categories.includes(category)) || this.doesIndexerSpecificRuleApply(indexer);
     }
 
     protected shouldUpdate(current: Indexer, indexer: JackettIndexer) {
@@ -154,6 +162,17 @@ export abstract class Service {
         this.undoIndexerSpecificConfiguration(indexer, current.categories, []);
 
         return arrayEquals(current.categories, availableCategories);
+    }
+
+    protected doesIndexerSpecificRuleApply(indexer: JackettIndexer): boolean {
+        return -1 !== Config.indexSpecificRules.findIndex((indexSpecificRule) => {
+            if (indexSpecificRule.service === Services.ALL || indexSpecificRule.service === this.service) {
+                if (indexer.id === indexSpecificRule.indexerId) {
+                    return true;
+                }
+            }
+            return false;
+        });
     }
 
     protected indexerSpecificConfiguration(
