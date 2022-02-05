@@ -15,7 +15,7 @@ export class Lidarr extends Service {
         super(Services.LIDARR, c.categories, c.seeds);
         this.checkUrlAndApiKey(c.url, c.apiKey);
 
-        this.apiRoutes = new ApiRoutes(c.url!, '/api/v1', c.apiKey!);
+        this.apiRoutes = new ApiRoutes(c.url!, c.apiPath, c.apiKey!);
     }
 
     protected mapToIndexer(entry: LidarrEntry): Indexer {

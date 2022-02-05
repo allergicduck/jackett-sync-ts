@@ -17,7 +17,7 @@ export class Sonarr extends Service {
         this.checkUrlAndApiKey(c.url, c.apiKey);
 
         this.animeCategories = c.animeCategories;
-        this.apiRoutes = new ApiRoutes(c.url!, '/api/v3', c.apiKey!);
+        this.apiRoutes = new ApiRoutes(c.url!, c.apiPath, c.apiKey!);
     }
 
     protected mapToIndexer(entry: SonarrEntry): Indexer {

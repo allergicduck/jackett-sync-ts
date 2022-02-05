@@ -10,6 +10,7 @@ export class Config {
     public static sonarr = {
         url: process.env.SONARR_URL,
         apiKey: process.env.SONARR_KEY,
+        apiPath: process.env.SONARR_PATH || '/api/v3',
         categories: [5000, 5030, 5040],
         animeCategories: [5070],
         seeds: 1,
@@ -18,6 +19,7 @@ export class Config {
     public static radarr = {
         url: process.env.RADARR_URL,
         apiKey: process.env.RADARR_KEY,
+        apiPath: process.env.RADARR_PATH || '/api/v3',
         categories: [2000, 2010, 2020, 2030, 2035, 2040, 2045, 2050, 2060],
         seeds: 1,
     };
@@ -25,6 +27,7 @@ export class Config {
     public static lidarr = {
         url: process.env.LIDARR_URL,
         apiKey: process.env.LIDARR_KEY,
+        apiPath: process.env.LIDARR_PATH || '/api/v1',
         categories: [3000, 3010, 3020, 3030, 3040],
         seeds: 1,
     };
@@ -32,6 +35,7 @@ export class Config {
     public static readarr = {
         url: process.env.READARR_URL,
         apiKey: process.env.READARR_KEY,
+        apiPath: process.env.READARR_PATH || '/api/v1',
         categories: [7020, 8010],
         seeds: 1,
     };

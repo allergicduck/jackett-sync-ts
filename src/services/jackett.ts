@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { parse } from 'fast-xml-parser';
+import {XMLParser} from 'fast-xml-parser';
 import { CategoryEntry, JackettEntry } from '../interfaces/JackettEntry';
 import { Config } from '../config';
 import { JackettIndexer } from '../models/jackettIndexer';
@@ -14,6 +14,7 @@ export class Jackett {
     url: string;
     altUrl?: string;
     apiKey: string;
+    parser: XMLParser
 
     constructor() {
         const c = Config.jackett;
@@ -22,6 +23,7 @@ export class Jackett {
         this.url = c.url!;
         this.altUrl = c.altUrl;
         this.apiKey = c.apiKey!;
+        this.parser = new XMLParser(parseOpts);
     }
 
     protected checkUrlAndApiKey(url: string | undefined, apiKey: string | undefined) {
@@ -40,7 +42,7 @@ export class Jackett {
             throw error;
         });
 
-        const parsedXML = parse(response.data, parseOpts);
+        const parsedXML = this.parser.parse(response.data);
 
         if (parsedXML.error) {
             throw new Error('Jackett: ' + parsedXML.error.description);
