@@ -1,6 +1,8 @@
 export interface RadarrEntry {
     enableRss: boolean,
     enableSearch: boolean,
+    enableAutomaticSearch: boolean,
+    enableInteractiveSearch: boolean,
     supportsRss: boolean,
     supportsSearch: boolean,
     protocol: string,
