@@ -8,7 +8,7 @@ on:
         default: 'test'
 
 jobs:
-  gcr-dockerhub-build-publish:
+  dockerhub-build-publish:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -18,12 +18,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.CR_PAT }}
       - name: Show Runners environment (debug)
         uses: nick-invision/retry@v2.4.0
         with:
@@ -42,7 +36,7 @@ jobs:
       - name: Generate app name
         shell: bash
         run: |
-          app_name=$(echo "${GITHUB_REPOSITORY}" | grep -P -o -m 1 '(?<=/arch-).*')
+          app_name=jackett-sync
           echo "[debug] Generated app name is '${app_name}'"
           echo "::set-output name=app_name::$app_name"
         id: generate_app_name
@@ -54,19 +48,9 @@ jobs:
           retry_wait_seconds: 120
           command: |
             docker build \
-              --tag ${{ github.repository }}:${{ steps.generate_temporary_tag_name.outputs.test_tag }} \
-              --tag ${{ github.repository }}:${{ github.event.inputs.tags }} \
-              --tag ghcr.io/${{ github.repository }}:${{ steps.generate_temporary_tag_name.outputs.test_tag }} \
-              --tag ghcr.io/${{ github.repository }}:${{ github.event.inputs.tags }} \
+              --tag allergicduck/jackett-sync:${{ steps.generate_temporary_tag_name.outputs.test_tag }} \
+              --tag allergicduck/jackett-sync:${{ github.event.inputs.tags }} \
               .
-      - name: Run Tests
-        shell: bash
-        run: |
-          git_clone_scripts_dest="/tmp/scripts"
-          git_clone_scripts_repo="https://github.com/binhex/scripts.git"
-
-          git clone "${git_clone_scripts_repo}" "${git_clone_scripts_dest}"
-          "${git_clone_scripts_dest}/shell/arch/docker/testrunner.sh" --app-name ${{ steps.generate_app_name.outputs.app_name }} --image-name "ghcr.io/${{ github.repository }}:${{ steps.generate_temporary_tag_name.outputs.test_tag }}"
       - name: Push Docker image to Docker Hub
         uses: nick-invision/retry@v2.4.0
         with:
@@ -74,12 +58,4 @@ jobs:
           max_attempts: 3
           retry_wait_seconds: 120
           command: |
-            docker push ${{ github.repository }}:${{ github.event.inputs.tags }}
-      - name: Push Docker image to GitHub Container Registry (GHCR)
-        uses: nick-invision/retry@v2.4.0
-        with:
-          timeout_minutes: 30
-          max_attempts: 3
-          retry_wait_seconds: 120
-          command: |
-            docker push ghcr.io/${{ github.repository }}:${{ github.event.inputs.tags }}
+            docker push allergicduck/jackett-sync:${{ github.event.inputs.tags }}
