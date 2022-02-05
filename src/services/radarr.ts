@@ -44,6 +44,8 @@ export class Radarr extends Service {
         return {
             priority: 25,
             enableRss: true,
+            enableAutomaticSearch: true,
+	        enableInteractiveSearch: true,
             enableSearch: true,
             supportsRss: true,
             supportsSearch: true,
