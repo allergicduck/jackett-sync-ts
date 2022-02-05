@@ -16,7 +16,7 @@ async function start() {
         const jackett = new Jackett();
         jackettIndexers = await jackett.getIndexers();
     } catch (error) {
-        console.error(`[${Jackett.name}] Couldn't get indexers: `, error.message);
+        console.error(`[${Jackett.name}] Couldn't get indexers: `, (error as Error).message);
         process.exit(1);
     }
 
@@ -24,28 +24,28 @@ async function start() {
         const sonarr = new Sonarr();
         sync(sonarr, jackettIndexers);
     } catch (error) {
-        console.error(`[${Sonarr.name}] Failed:`, error.message);
+        console.error(`[${Sonarr.name}] Failed:`, (error as Error).message);
     }
 
     try {
         const radarr = new Radarr();
         sync(radarr, jackettIndexers);
     } catch (error) {
-        console.error(`[${Radarr.name}] Failed:`, error.message);
+        console.error(`[${Radarr.name}] Failed:`, (error as Error).message);
     }
 
     try {
         const lidarr = new Lidarr();
         sync(lidarr, jackettIndexers);
     } catch (error) {
-        console.error(`[${Lidarr.name}] Failed:`, error.message);
+        console.error(`[${Lidarr.name}] Failed:`, (error as Error).message);
     }
 
     try {
         const readarr = new Readarr();
         sync(readarr, jackettIndexers);
     } catch (error) {
-        console.error(`[${Readarr.name}] Failed:`, error.message);
+        console.error(`[${Readarr.name}] Failed:`, (error as Error).message);
     }
 }
 

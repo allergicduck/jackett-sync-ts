@@ -15,7 +15,7 @@ export class Radarr extends Service {
         super(Services.RADARR, c.categories, c.seeds);
         this.checkUrlAndApiKey(c.url, c.apiKey);
 
-        this.apiRoutes = new ApiRoutes(c.url!, '/api', c.apiKey!);
+        this.apiRoutes = new ApiRoutes(c.url!, c.apiPath, c.apiKey!);
     }
 
     protected mapToIndexer(entry: RadarrEntry) {
