@@ -30,6 +30,7 @@ export enum SonarrFieldName {
     apiKey = "apiKey",
     categories = "categories",
     animeCategories = "animeCategories",
+    animeStandardFormatSearch = "animeStandardFormatSearch",
     additionalParameters = "additionalParameters",
     minimumSeeders = "minimumSeeders",
     seedRatio = "seedCriteria.seedRatio",

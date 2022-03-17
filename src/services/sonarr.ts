@@ -59,6 +59,7 @@ export class Sonarr extends Service {
                 { name: SonarrFieldName.apiKey, value: indexer.key },
                 { name: SonarrFieldName.categories, value: supportedCategories },
                 { name: SonarrFieldName.animeCategories, value: supportedAnimeCategories },
+                { name: SonarrFieldName.animeStandardFormatSearch, value: supportedAnimeCategories.length != 0 },
                 { name: SonarrFieldName.additionalParameters },
                 { name: SonarrFieldName.minimumSeeders, value: this.seeds },
                 { name: SonarrFieldName.seedRatio },
