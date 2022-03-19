@@ -20,7 +20,7 @@ An image is available at [allergicduck/jackett-sync](https://hub.docker.com/r/al
 
 Confirmed working versions:
 - Jackett: 0.20.504
-- Sonarr: 3.0.6.1342
+- Sonarr: 3.0.7.1477
 - Radarr: 4.0.4.5922
 - Lidarr: 0.8.1.2135
 - Readerr: 0.1.0.736
