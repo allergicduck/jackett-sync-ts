@@ -13,7 +13,7 @@ export class Config {
         apiPath: process.env.SONARR_PATH || '/api/v3',
         categories: [5000, 5030, 5040, 8000],
         animeCategories: [5070],
-        seeds: process.env.SONARR_MIN_SEEDS || 1,
+        seeds: parseInt(process.env.SONARR_MIN_SEEDS || '1'),
     };
 
     public static radarr = {
@@ -21,7 +21,7 @@ export class Config {
         apiKey: process.env.RADARR_KEY,
         apiPath: process.env.RADARR_PATH || '/api/v3',
         categories: [2000, 2010, 2020, 2030, 2035, 2040, 2045, 2050, 2060, 8000],
-        seeds: process.env.RADARR_MIN_SEEDS || 1,
+        seeds: parseInt(process.env.RADARR_MIN_SEEDS || '1'),
     };
 
     public static lidarr = {
@@ -29,7 +29,7 @@ export class Config {
         apiKey: process.env.LIDARR_KEY,
         apiPath: process.env.LIDARR_PATH || '/api/v1',
         categories: [3000, 3010, 3020, 3030, 3040, 8000],
-        seeds: process.env.LIDARR_MIN_SEEDS || 1,
+        seeds: parseInt(process.env.LIDARR_MIN_SEEDS || '1'),
     };
 
     public static readarr = {
@@ -37,7 +37,7 @@ export class Config {
         apiKey: process.env.READARR_KEY,
         apiPath: process.env.READARR_PATH || '/api/v1',
         categories: [3000, 3010, 3030, 3050, 7000, 7020, 8010, 8000],
-        seeds: process.env.READARR_MIN_SEEDS || 1,
+        seeds: parseInt(process.env.READARR_MIN_SEEDS || '1'),
     };
 
     public static indexSpecificRules = [
